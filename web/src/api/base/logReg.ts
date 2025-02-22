@@ -6,8 +6,8 @@ export interface LoginRequestData {
   /** 密码 */
   password: string
   /** 验证码 */
-  captcha: string
-  captchaId: string
+  // captcha: string
+  // captchaId: string
 }
 
 type LoginCodeResponseData = ApiResponseData<{ picPath: string; captchaId: string }>

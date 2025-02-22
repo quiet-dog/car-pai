@@ -28,8 +28,8 @@ export const useUserStore = defineStore("user", () => {
     const res = await loginApi({
       username: loginData.username,
       password: loginData.password,
-      captcha: loginData.captcha,
-      captchaId: loginData.captchaId
+      // captcha: loginData.captcha,
+      // captchaId: loginData.captchaId
     })
     if (res.code === 0) {
       token.value = res.data.token

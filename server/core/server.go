@@ -3,11 +3,12 @@ package core
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"go.uber.org/zap"
 
 	"server/global"
 	"server/initialize"

@@ -2,17 +2,19 @@ package initialize
 
 import (
 	"fmt"
-	"go.uber.org/zap"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"time"
 
+	"go.uber.org/zap"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+
 	"server/global"
 	modelAuthority "server/model/authority"
 	modelFileM "server/model/fileM"
+	modelManage "server/model/manage"
 	modelMonitor "server/model/monitor"
 	modelSysTool "server/model/sysTool"
 )
@@ -93,6 +95,8 @@ func RegisterTables(db *gorm.DB) {
 		modelFileM.FileModel{},
 		// 系统工具
 		modelSysTool.CronModel{},
+		modelManage.AreaModel{},
+		modelManage.DeviceModel{},
 	)
 
 	if err != nil {

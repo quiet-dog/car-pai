@@ -3,11 +3,12 @@ package base
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/mojocn/base64Captcha"
 	"go.uber.org/zap"
-	"time"
 
 	"server/global"
 	modelAuthority "server/model/authority"
@@ -63,19 +64,19 @@ func (ba *LogRegApi) Login(c *gin.Context) {
 	}
 
 	// 验证码
-	if store.Verify(login.CaptchaId, login.Captcha, true) {
-		u := &modelAuthority.UserModel{Username: login.Username, Password: login.Password}
-		user, err := logRegService.Login(u)
-		if err != nil {
-			commonRes.FailWithMessage(fmt.Sprintf("登录失败: %s", err.Error()), c)
-			global.TD27_LOG.Error("登录失败", zap.Error(err))
-			return
-		}
-		// 获取token
-		tokenNext(c, user)
-	} else {
-		commonRes.FailWithMessage("验证码错误", c)
+	// if store.Verify(login.CaptchaId, login.Captcha, true) {
+	u := &modelAuthority.UserModel{Username: login.Username, Password: login.Password}
+	user, err := logRegService.Login(u)
+	if err != nil {
+		commonRes.FailWithMessage(fmt.Sprintf("登录失败: %s", err.Error()), c)
+		global.TD27_LOG.Error("登录失败", zap.Error(err))
+		return
 	}
+	// 获取token
+	tokenNext(c, user)
+	// } else {
+	// 	commonRes.FailWithMessage("验证码错误", c)
+	// }
 }
 
 // 生成jwt token

@@ -4,12 +4,12 @@ import { defineStore } from "pinia"
 import { type RouteRecordRaw } from "vue-router"
 import { constantRoutes } from "@/router"
 import { formatRouter } from "@/utils/router"
-import { type MenusData, getMenus } from "@/api/authority/menu"
+import { type MenuData, getMenus } from "@/api/authority/menu"
 
 export const usePermissionStore = defineStore("permission", () => {
   const routes = ref<RouteRecordRaw[]>([])
   const dynamicRoutes = ref<RouteRecordRaw[]>([])
-  const asyncRouterList = ref<MenusData[]>([])
+  const asyncRouterList = ref<MenuData[]>([])
 
   const setRoutes = async () => {
     // 获取动态路由

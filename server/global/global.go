@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 
 	"server/config"
+	"server/pkg/hk_gateway"
 )
 
 var (
@@ -19,4 +20,5 @@ var (
 	TD27_REDIS               *redis.Client
 	TD27_Concurrency_Control = &singleflight.Group{}
 	TD27_CRON                *cron.Cron
+	HikGateway               *hk_gateway.HikGateway
 )

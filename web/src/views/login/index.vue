@@ -25,7 +25,7 @@
             show-password
           />
         </el-form-item>
-        <el-form-item prop="captcha">
+        <!-- <el-form-item prop="captcha">
           <el-input
             v-model.trim="loginFormData.captcha"
             placeholder="验证码"
@@ -46,7 +46,7 @@
               </el-image>
             </template>
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin">登 录</el-button>
       </el-form>
     </div>
@@ -77,8 +77,8 @@ const codeUrl = ref("")
 const loginFormData: LoginRequestData = reactive({
   username: "",
   password: "",
-  captcha: "",
-  captchaId: ""
+  // captcha: "",
+  // captchaId: ""
 })
 
 /** 登录表单校验规则 */
@@ -100,14 +100,14 @@ const handleLogin = () => {
         .login({
           username: loginFormData.username,
           password: loginFormData.password,
-          captcha: loginFormData.captcha,
-          captchaId: loginFormData.captchaId
+          // captcha: loginFormData.captcha,
+          // captchaId: loginFormData.captchaId
         })
         .then(() => {
           router.push({ path: "/" })
         })
         .catch(() => {
-          createCode()
+          // createCode()
         })
         .finally(() => {
           loading.value = false
@@ -117,18 +117,18 @@ const handleLogin = () => {
 }
 
 /** 创建验证码 */
-const createCode = () => {
-  // 先清空验证码的输入
-  loginFormData.captcha = ""
-  // 获取验证码
-  captcha().then((res) => {
-    codeUrl.value = res.data.picPath
-    loginFormData.captchaId = res.data.captchaId
-  })
-}
+// const createCode = () => {
+//   // 先清空验证码的输入
+//   loginFormData.captcha = ""
+//   // 获取验证码
+//   captcha().then((res) => {
+//     codeUrl.value = res.data.picPath
+//     loginFormData.captchaId = res.data.captchaId
+//   })
+// }
 
 /** 初始化验证码 */
-createCode()
+// createCode()
 </script>
 
 <style lang="scss" scoped>

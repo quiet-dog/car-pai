@@ -21,7 +21,7 @@ func Routers() *gin.Engine {
 
 	// 跨域，如需跨域可以打开下面的注释
 	// global.GVA_LOG.Info("use middleware cors")
-	// Router.Use(middleware.Cors()) // 直接放行全部跨域请求
+	Router.Use(middleware.Cors()) // 直接放行全部跨域请求
 	// Router.Use(middleware.CorsByRules()) // 按照配置的规则放行跨域请求
 
 	global.TD27_LOG.Info("register swagger handler")
@@ -51,6 +51,8 @@ func Routers() *gin.Engine {
 	monitorRouter := router.RouterGroupApp.Monitor
 	// -> 系统工具
 	sysToolRouter := router.RouterGroupApp.SysTool
+	// -> 系统管理
+	manageRouter := router.RouterGroupApp.Manage
 
 	// 需要认证的路由
 	PrivateGroup := Router.Group(global.TD27_CONFIG.Router.Prefix)
@@ -69,6 +71,14 @@ func Routers() *gin.Engine {
 		fileMRouter.InitFileRouter(PrivateGroup)
 		// 系统工具
 		sysToolRouter.InitCronRouter(PrivateGroup)
+		// 车牌系统
+	}
+
+	manageGroup := Router.Group("manage")
+	manageGroup.Use(middleware.JWTAuth())
+	{
+		manageRouter.InitAreaRouter(manageGroup)   // 用户
+		manageRouter.InitDeviceRouter(manageGroup) // 角色
 	}
 
 	global.TD27_LOG.Info("router register success")

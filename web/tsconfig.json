@@ -17,6 +17,10 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
+    "jsx": "preserve",
+    "noEmit": true,                    // 添加此项以满足要求
+    "allowImportingTsExtensions":true,
+    // "moduleResolution": "Node",
     "types": [
       "node",
       "vite/client",
@@ -32,6 +36,7 @@
   },
   "include": [
     "src/**/*.ts",
+    "src/**/*.tsx",
     "src/**/*.d.ts",
     "src/**/*.vue",
     "tests/**/*.ts",

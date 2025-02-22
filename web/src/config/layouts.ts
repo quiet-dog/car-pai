@@ -38,7 +38,7 @@ const defaultSettings: LayoutSettings = {
   showScreenfull: true,
   showSearchMenu: true,
   cacheTagsView: false,
-  showWatermark: true,
+  showWatermark: false,
 }
 
 /** 项目配置 */
