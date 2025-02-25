@@ -77,10 +77,10 @@ func NewHikClinet(conf HikConfig) (hikClient *HikClient, err error) {
 func NewOnlyHikClinet(conf HikConfig) (hikClient *HikClient, err error) {
 	hikClient = &HikClient{
 		hikConfig: conf,
-		client:    resty.New().SetBaseURL(fmt.Sprintf("http://%s:%d", conf.Ip, conf.Port)).SetTimeout(3 * time.Second),
+		client:    resty.New().SetBaseURL(fmt.Sprintf("%s:%d", conf.Ip, conf.Port)).SetTimeout(3 * time.Second),
 		isConnect: false,
 	}
-	hikClient.isConnect = true
+	// hikClient.isConnect = true
 
 	// hikClient.doorConnectCtx, hikClient.doorCancel = context.WithCancel(context.Background())
 
@@ -95,9 +95,9 @@ func newHikClinet(conf HikConfig) (hikClient *HikClient, err error) {
 	}
 
 	// 开启长连接
-	hikClient.isConnect = true
 	if _, err = hikClient.UserCheck(); err != nil {
 	}
+	hikClient.isConnect = true
 
 	return hikClient, err
 }
@@ -348,6 +348,8 @@ func (c *HikClient) UserCheck() (result *UserCheckRes, err error) {
 	if err = c.Do(req); err != nil {
 		return
 	}
+	c.ctx, c.cancel = context.WithCancel(context.Background())
+	c.isConnect = true
 	return
 }
 
@@ -874,4 +876,86 @@ func (c *HikClient) GetDeviceInfo() (result *DeviceInfo, err error) {
 		return
 	}
 	return result, nil
+}
+
+func (c *HikClient) SetVCLData(reqBody SetVCLDataReq) (err error) {
+
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	req := ReqInitParam{
+		Url: "/ISAPI/ITC/Entrance/VCL",
+		// Query: map[string]string{
+		// 	"format": "json",
+		// },
+		Query:  nil,
+		Body:   xmlWithHeader,
+		Result: nil,
+		Method: Put,
+		Headers: map[string]string{
+			"Content-Type": "application/xml",
+		},
+	}
+
+	if err = c.Do(req); err != nil {
+		return
+	}
+	return
+}
+
+// 修改
+func (c *HikClient) VCLGetCond(reqBody SetVCLDataReq) (err error) {
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	fmt.Println("请求信息", string(xmlWithHeader))
+	req := ReqInitParam{
+		Url: "/ISAPI/ITC/Entrance/VCL",
+		// Query: map[string]string{
+		// 	"format": "json",
+		// },
+		Body:   xmlWithHeader,
+		Result: nil,
+		Method: Put,
+		Headers: map[string]string{
+			"Content-Type": "application/xml",
+		},
+	}
+
+	if err = c.Do(req); err != nil {
+		return
+	}
+	return
+}
+
+func (c *HikClient) VCLDelCond(reqBody VCLDelCondReq) (result *ErrorMsg, err error) {
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+	req := ReqInitParam{
+		Url: "/ISAPI/ITC/Entrance/VCL",
+		// Query: map[string]string{
+		// 	"format": "json",
+		// },
+		Body:   xmlData,
+		Result: &result,
+		Method: Delete,
+		Headers: map[string]string{
+			"Content-Type": "application/xml",
+		},
+	}
+	if err = c.Do(req); err != nil {
+		return
+	}
+	return
+}
+
+func (c *HikClient) StartAlarmGuard() {
+
 }

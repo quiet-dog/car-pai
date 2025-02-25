@@ -7,6 +7,7 @@ export interface AreaModel extends AddArea {
 export interface AddArea {
     name: string
     remark?: string
+    userIds?: number[]
 }
 
 export interface EditArea extends CId,AddArea { }

@@ -2,6 +2,7 @@ import { AreaModel, createAreaApi, deleteAreaApi, editAreaApi, getAreaListApi } 
 import { onMounted, reactive, ref } from 'vue';
 import { usePagination } from "@/hooks/usePagination"
 import { Action, ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
+import { getUsersApi } from '@/api/authority/user';
 
 export function useAreaHook() {
 
@@ -23,7 +24,8 @@ export function useAreaHook() {
     const formData = reactive<AreaModel>({
         id: 0,
         name: "",
-        remark: ""
+        remark: "",
+        userIds: []
     })
     const kind = ref("add")
     const mpFormRules: FormRules = reactive({
@@ -34,6 +36,7 @@ export function useAreaHook() {
             { required: false, message: "请输入区域备注", trigger: "blur" }
         ]
     })
+    const selectUserOption = ref()
 
     const handleSearch = () => {
         getTable()
@@ -76,6 +79,7 @@ export function useAreaHook() {
             title.value = "编辑区域"
         }
         dialogVisible.value = true
+        getUserList()
     }
 
     const handleClose = (formRef: FormInstance) => {
@@ -92,7 +96,8 @@ export function useAreaHook() {
                 if (kind.value === "Add") {
                     const res = await createAreaApi({
                         name: formData.name,
-                        remark: formData.remark
+                        remark: formData.remark,
+                        userIds: formData.userIds
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
@@ -102,14 +107,12 @@ export function useAreaHook() {
                     const res = await editAreaApi({
                         id: formData.id,
                         name: formData.name,
-                        remark: formData.remark
+                        remark: formData.remark,
+                        userIds: formData.userIds
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
                         getTable()
-                        // // 替换数据
-                        // const index = tableData.value.indexOf(res.data)
-                        // tableData.value.splice(index, 1, res.data)
                     }
                 }
                 closeDialog()
@@ -122,6 +125,7 @@ export function useAreaHook() {
             formData.id = row.id
             formData.name = row.name
             formData.remark = row.remark
+            formData.userIds = row.userIds
             handleOpen("Edit")
         } else {
             ElMessageBox.alert("确定删除该区域吗?", "提示", {
@@ -141,6 +145,19 @@ export function useAreaHook() {
             })
         }
     }
+
+    const getUserList = () => {
+        getUsersApi({ page: 1, pageSize: 1000 }).then(res => {
+            selectUserOption.value = res.data.list.map(item => {
+                return {
+                    label: item.username,
+                    value: item.id
+                }
+            })
+        })
+    }
+
+
 
     onMounted(() => {
         getTable()
@@ -165,6 +182,7 @@ export function useAreaHook() {
         operateAction,
         mpFormRules,
         tableData,
-        handleRow
+        handleRow,
+        selectUserOption
     }
 }

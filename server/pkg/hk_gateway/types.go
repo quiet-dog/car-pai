@@ -38,6 +38,15 @@ type ErrorMsg struct {
 	ErrorMsg      string `json:"errorMsg"`
 }
 
+type ResponseStatus struct {
+	XMLName       xml.Name `xml:"ResponseStatus"` // 根元素名称
+	Version       string   `xml:"version,attr"`   // version作为属性
+	RequestURL    string   `xml:"requestURL"`     // 请求URL
+	StatusCode    int      `xml:"statusCode"`     // 状态码
+	StatusString  string   `xml:"statusString"`   // 状态描述
+	SubStatusCode string   `xml:"subStatusCode"`  // 子状态码
+}
+
 type Msg struct {
 	Ip   string
 	Data Result
@@ -49,3 +58,29 @@ const (
 	SUCCESS = "success"
 	ERROR   = "error"
 )
+
+type VCLData struct {
+	XMLName      xml.Name     `xml:"VCLData"`
+	Version      string       `xml:"version,attr"`
+	CurrentUpNum int          `xml:"currentUpNum"`
+	TotalNum     int          `xml:"totalNum"`
+	VCLDataList  VCLDataListO `xml:"VCLDataList"`
+}
+
+// VCLDataList 包含多个singleVCLData的列表
+type VCLDataListO struct {
+	SingleVCLData []SingleVCLDataO `xml:"singleVCLData"`
+}
+
+// SingleVCLData 单个车辆数据
+type SingleVCLDataO struct {
+	ID         int    `xml:"id"`
+	RunNum     int    `xml:"runNum"`
+	ListType   int    `xml:"listType"`
+	PlateType  int    `xml:"plateType"`
+	PlateColor int    `xml:"plateColor"`
+	PlateNum   string `xml:"plateNum"`
+	CardNo     string `xml:"cardNo"`
+	StartTime  string `xml:"startTime"`
+	EndTime    string `xml:"endTime"`
+}

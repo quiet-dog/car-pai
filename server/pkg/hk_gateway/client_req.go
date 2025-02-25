@@ -35,22 +35,12 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 		return errors.New("未连接")
 	}
 
-	// if !c.isConnect && param.Url != "/ISAPI/Security/userCheck" {
-	// 	return errors.New("未连接")
-	// }
-	// // auth, err := c.newHikDisage(param)
-	// // if err != nil {
-	// // 	c.isConnect = false
-	// // 	return errors.New("服务错误或验证失败")
-	// // }
-
 	resClient := resty.New()
 	if param.Headers == nil {
 		param.Headers = make(map[string]string)
 	}
-	// param.Headers["Authorization"] = auth
 
-	req := resClient.SetBaseURL("http://"+c.hikConfig.Ip).SetTimeout(3*time.Second).R().SetDigestAuth(c.hikConfig.Username, c.hikConfig.Password)
+	req := resClient.SetBaseURL(c.hikConfig.Ip).SetDebug(true).SetTimeout(3*time.Second).R().SetDigestAuth(c.hikConfig.Username, c.hikConfig.Password)
 	req = req.SetQueryParams(param.Query).SetBody(param.Body).SetHeaders(param.Headers)
 
 	var resp *resty.Response
@@ -74,12 +64,10 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 	}
 
 	if err != nil {
-		// c.isConnect = false
 		return
 	}
 
 	// 打印响应的内容
-	fmt.Println("打印响应的内容", string(resp.Body()))
 	// 判断响应的内容格式
 	switch resp.Header().Get("Content-Type") {
 	case "application/xml":
@@ -102,6 +90,17 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 
 				return fmt.Errorf("StatusString = %s, StatusValue = %d, RetryLoginTime = %d", userCheck.StatusString, userCheck.StatusValue, userCheck.RetryLoginTime)
 			}
+			if param.Result == nil {
+				res := ResponseStatus{}
+				fmt.Println("打印响应的内容", string(resp.Body()))
+				if err := xml.Unmarshal(resp.Body(), &res); err != nil {
+					return errors.New("xml json 解析失败12" + err.Error())
+				}
+				if res.StatusCode != 0 && res.StatusCode != 1 && res.SubStatusCode != "OK" {
+					return fmt.Errorf("错误1")
+				}
+				return
+			}
 			if err = xml.Unmarshal(resp.Body(), param.Result); err != nil {
 				fmt.Printf("xml 解析失败 验证后  %s", err.Error())
 				return fmt.Errorf("xml 解析失败 验证后1  %s", err.Error())
@@ -110,21 +109,35 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 		}
 	case "application/json":
 		{
-			// if resp.StatusCode() != 200 {
-			errMsg := ErrorMsg{}
-			if err = json.Unmarshal(resp.Body(), &errMsg); err != nil {
-				return errors.New("json 解析失败" + err.Error())
+			fmt.Println("打印响应的内容xxxxx", string(resp.Body()))
+			res := ResponseStatus{}
+			if err := json.Unmarshal(resp.Body(), &res); err != nil {
+				return errors.New("xml json 解析失败" + err.Error())
 			}
+
+			if res.StatusCode != 0 && res.StatusCode != 1 && res.SubStatusCode != "OK" {
+				return fmt.Errorf("xml json 解析失败 验证后  %s %d %s", res.StatusString, res.StatusCode, res.SubStatusCode)
+			}
+
+			if err = xml.Unmarshal(resp.Body(), param.Result); err != nil {
+				return errors.New("xml json 解析失败 验证后2" + err.Error() + resp.Status())
+			}
+
+			// if resp.StatusCode() != 200 {
+			// errMsg := ErrorMsg{}
+			// if err = json.Unmarshal(resp.Body(), &errMsg); err != nil {
+			// 	return errors.New("json 解析失败" + err.Error())
+			// }
 
 			// 判断返回的json格式是不是这个格式
-			if errMsg.StatusCode != 0 && errMsg.StatusCode != 1 && errMsg.SubStatusCode != "OK" {
-				err = fmt.Errorf("ErrorCode = %d, ErrorMsg = %s, StatusString = %s, StatusCode = %d, SubStatusCode = %s", errMsg.ErrorCode, errMsg.ErrorMsg, errMsg.StatusString, errMsg.StatusCode, errMsg.SubStatusCode)
-				return
-			}
+			// if errMsg.StatusCode != 0 && errMsg.StatusCode != 1 && errMsg.SubStatusCode != "OK" {
+			// 	err = fmt.Errorf("ErrorCode = %d, ErrorMsg = %s, StatusString = %s, StatusCode = %d, SubStatusCode = %s", errMsg.ErrorCode, errMsg.ErrorMsg, errMsg.StatusString, errMsg.StatusCode, errMsg.SubStatusCode)
+			// 	return
+			// }
 
-			if err = json.Unmarshal(resp.Body(), param.Result); err != nil {
-				return errors.New("json 解析失败 验证后2" + err.Error() + resp.Status())
-			}
+			// if err = json.Unmarshal(resp.Body(), param.Result); err != nil {
+			// 	return errors.New("json 解析失败 验证后2" + err.Error() + resp.Status())
+			// }
 
 		}
 	case "image/jpeg":

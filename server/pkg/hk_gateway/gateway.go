@@ -404,3 +404,36 @@ func (h *HikGateway) GetDoorThreeInfo(ip string) (doorAcsEventLogs *GetAcsEventR
 	return
 
 }
+
+func (h *HikGateway) SetVCLData(ip string, data SetVCLDataReq) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).SetVCLData(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+func (h *HikGateway) VCLGetCond(ip string, data SetVCLDataReq) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).VCLGetCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+func (h *HikGateway) VCLDelCond(ip string, data VCLDelCondReq) (r *ErrorMsg, err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			r, err = value.(*HikClient).VCLDelCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}

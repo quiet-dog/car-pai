@@ -20,7 +20,7 @@ func (a *DeviceApi) GetDeviceList(c *gin.Context) {
 	}
 
 	if list, total, err := deviceService.GetDeviceList(devicePageInfo); err != nil {
-		commonRes.FailWithMessage("获取失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("获取失败", zap.Error(err))
 	} else {
 		commonRes.OkWithDetailed(commonRes.PageResult{
@@ -47,7 +47,7 @@ func (a *DeviceApi) CreateDevice(c *gin.Context) {
 	}
 
 	if device, err := deviceService.CreateDevice(addDevice); err != nil {
-		commonRes.FailWithMessage("创建失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("创建失败", zap.Error(err))
 	} else {
 		commonRes.OkWithDetailed(device, "创建成功", c)
@@ -62,7 +62,7 @@ func (a *DeviceApi) EditDevice(c *gin.Context) {
 	}
 
 	if device, err := deviceService.EditDevice(editDevice); err != nil {
-		commonRes.FailWithMessage("编辑失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("编辑失败", zap.Error(err))
 	} else {
 		commonRes.OkWithDetailed(device, "编辑成功", c)
@@ -77,7 +77,7 @@ func (a *DeviceApi) DeleteDevice(c *gin.Context) {
 	}
 
 	if err := deviceService.DeleteDevice(cId); err != nil {
-		commonRes.FailWithMessage("删除失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("删除失败", zap.Error(err))
 	} else {
 		commonRes.OkWithMessage("删除成功", c)

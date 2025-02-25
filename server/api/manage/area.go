@@ -26,8 +26,8 @@ func (a *AreaApi) GetAreaList(c *gin.Context) {
 		return
 	}
 
-	if list, total, err := areaService.GetAreaList(areaPageInfo); err != nil {
-		commonRes.FailWithMessage("获取失败", c)
+	if list, total, err := areaService.GetAreaList(c, areaPageInfo); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("获取失败", zap.Error(err))
 	} else {
 		commonRes.OkWithDetailed(commonRes.PageResult{
@@ -54,7 +54,7 @@ func (a *AreaApi) CreateArea(c *gin.Context) {
 	}
 
 	if area, err := areaService.CreateArea(addArea); err != nil {
-		commonRes.FailWithMessage("创建失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("创建失败", zap.Error(err))
 	} else {
 		commonRes.OkWithDetailed(area, "创建成功", c)
@@ -69,7 +69,7 @@ func (a *AreaApi) EditArea(c *gin.Context) {
 	}
 
 	if area, err := areaService.EditArea(editArea); err != nil {
-		commonRes.FailWithMessage("编辑失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("编辑失败", zap.Error(err))
 	} else {
 		commonRes.OkWithDetailed(area, "编辑成功", c)
@@ -84,7 +84,7 @@ func (a *AreaApi) DeleteArea(c *gin.Context) {
 	}
 
 	if err := areaService.DeleteArea(cId); err != nil {
-		commonRes.FailWithMessage("删除失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error("删除失败", zap.Error(err))
 	} else {
 		commonRes.OkWithMessage("删除成功", c)

@@ -79,6 +79,7 @@ func Routers() *gin.Engine {
 	{
 		manageRouter.InitAreaRouter(manageGroup)   // 用户
 		manageRouter.InitDeviceRouter(manageGroup) // 角色
+		manageRouter.InitCarRouter(manageGroup)    // 菜单
 	}
 
 	global.TD27_LOG.Info("router register success")

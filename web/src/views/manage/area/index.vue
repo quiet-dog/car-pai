@@ -17,7 +17,7 @@ const {
   handleOpen,
   handleClose, closeDialog,
   operateAction, mpFormRules,
-  tableData,handleRow
+  tableData, handleRow, selectUserOption
   // formRules, formRef, closeDialog, operateAction,handleClose
 } = useAreaHook();
 </script>
@@ -55,13 +55,13 @@ const {
           <el-table-column prop="remark" label="备注" min-width="200" />
           <el-table-column prop="createdAt" label="创建时间">
             <template #default="scope">
-                {{ formatDateTime(scope.row.createdAt) }}
+              {{ formatDateTime(scope.row.createdAt) }}
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200">
             <template #default="scope">
-              <el-button type="text"  @click="handleRow(scope.row,'Edit')" >编辑</el-button>
-              <el-button type="danger" @click="handleRow(scope.row,'')"  text>删除</el-button>
+              <el-button type="text" @click="handleRow(scope.row, 'Edit')">编辑</el-button>
+              <el-button type="danger" @click="handleRow(scope.row, '')" text>删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -79,6 +79,11 @@ const {
         style="width: 95%; margin-top: 15px">
         <el-form-item label="区域名称" prop="name">
           <el-input v-model="formData.name" placeholder="请输入区域名称" />
+        </el-form-item>
+        <el-form-item label="可见用户" prop="userIds">
+          <el-select v-model="formData.userIds" placeholder="请选择用户" multiple>
+            <el-option v-for="item in selectUserOption" :key="item.id" :label="item.label" :value="item.value" />
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="formData.remark" placeholder="请输入备注" />

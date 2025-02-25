@@ -679,3 +679,80 @@ type DetailAbnormalStatus struct {
 	RaidLogicDiskError   bool `json:"raidLogicDiskError" xml:"raidLogicDiskError"`
 	SpareWorkDeviceError bool `json:"spareWorkDeviceError" xml:"spareWorkDeviceError"`
 }
+
+// 设置黑白名单车牌=====================================================
+// type SetVCLDataReq struct {
+// 	XMLName     xml.Name    `xml:"SetVCLData"`
+// 	VCLDataList VCLDataList `xml:"VCLDataList"`
+// }
+
+// type VCLDataList struct {
+// 	SingleVCLData SingleVCLData `xml:"singleVCLData"`
+// }
+
+// type SingleVCLData struct {
+// 	ID         int    `xml:"id"`
+// 	RunNum     int    `xml:"runNum"`
+// 	ListType   int    `xml:"listType"`
+// 	PlateNum   string `xml:"plateNum"`
+// 	PlateColor int    `xml:"plateColor"`
+// 	PlateType  int    `xml:"plateType"`
+// 	CardNo     string `xml:"cardNo"`
+// 	StartTime  string `xml:"startTime"`
+// 	EndTime    string `xml:"endTime"`
+// }
+
+type VCLGetCondReq struct {
+	XMLName     xml.Name `xml:"VCLGetCond"`
+	GetVCLNum   int      `xml:"getVCLNum"`
+	StartOffset int      `xml:"startOffSet"`
+	GetVCLCond  int      `xml:"getVCLCond"`
+	ListType    int      `xml:"listType"`
+	PlateNum    string   `xml:"plateNum"`
+	CardNo      string   `xml:"cardNo"`
+}
+
+type VCLDelCondReq struct {
+	XMLName    xml.Name `xml:"VCLDelCond"`
+	DelVCLCond int      `xml:"delVCLCond"`
+	PlateNum   string   `xml:"plateNum"`
+	PlateColor int      `xml:"plateColor"`
+	PlateType  int      `xml:"plateType"`
+	CardNo     string   `xml:"cardNo"`
+}
+
+// VCLGetCond 根元素结构体
+
+// SetVCLData 根元素结构体
+type SetVCLDataReq struct {
+	XMLName     xml.Name    `xml:"SetVCLData"`
+	VCLDataList VCLDataList `xml:"VCLDataList"`
+}
+
+// VCLDataList 包含多个singleVCLData的列表
+type VCLDataList struct {
+	SingleVCLData []SingleVCLData `xml:"singleVCLData"`
+}
+
+// CustomTime 自定义时间类型
+type CustomTime struct {
+	time.Time
+}
+
+// MarshalXML 自定义XML序列化，输出"0000-00-00T00:00:00Z"
+func (c CustomTime) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement("0000-00-00T00:00:00Z", start)
+}
+
+// SingleVCLData 单个车辆数据
+type SingleVCLData struct {
+	ID         int    `xml:"id"`
+	RunNum     int    `xml:"runNum"`
+	ListType   int    `xml:"listType"`
+	PlateNum   string `xml:"plateNum"`
+	PlateColor int    `xml:"plateColor"`
+	PlateType  int    `xml:"plateType"`
+	CardNo     string `xml:"cardNo"`
+	StartTime  string `xml:"startTime"`
+	EndTime    string `xml:"endTime"`
+}

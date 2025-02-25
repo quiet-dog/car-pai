@@ -5,7 +5,8 @@ import (
 )
 
 type AddArea struct {
-	Name string `json:"name" binding:"required"` // 地区名称
+	Name    string `json:"name" binding:"required"` // 地区名称
+	UserIDs []uint `json:"userIds"`                 // 用户ID
 	// 备注
 	Remark string `json:"remark"`
 }

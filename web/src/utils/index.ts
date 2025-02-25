@@ -6,6 +6,8 @@ export const formatDateTime = (time: string | number | Date) => {
   return time ? dayjs(new Date(time)).format("YYYY-MM-DD HH:mm:ss") : "N/A"
 }
 
+
+
 /** 用 JS 获取全局 css 变量 */
 export const getCssVariableValue = (cssVariableName: string) => {
   let cssVariableValue = ""

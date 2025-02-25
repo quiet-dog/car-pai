@@ -97,6 +97,7 @@ func RegisterTables(db *gorm.DB) {
 		modelSysTool.CronModel{},
 		modelManage.AreaModel{},
 		modelManage.DeviceModel{},
+		modelManage.CarModel{},
 	)
 
 	if err != nil {
