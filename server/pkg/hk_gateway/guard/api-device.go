@@ -14,7 +14,10 @@ func GetDeviceInfo(host, username, password string) (*xmlquery.Node, error) {
 	ctx := context.Background()
 	r := NewDigestRequest(ctx, username, password) // username & password
 	req, _ := http.NewRequest("GET", fmt.Sprintf("%s%s", host, "/ISAPI/System/deviceInfo"), nil)
-	resp, _ := r.Do(req)
+	resp, err := r.Do(req)
+	if err != nil {
+		return nil, err
+	}
 	defer resp.Body.Close()
 
 	rsp, err := ioutil.ReadAll(resp.Body)

@@ -20,7 +20,10 @@ type DeviceModel struct {
 	Remark      string     `json:"remark" gorm:"comment:备注"`                                     // 备注
 	AreaId      uint       `json:"areaId" gorm:"not null;comment:地区ID" binding:"required"`       // 地区ID
 	Type        string     `json:"type" gorm:"not null;comment:设备类型" binding:"required"`         // 设备类型
+	Rtsp        string     `json:"rtsp" gorm:"not null;comment:RTSP地址" binding:"required"`       // RTSP地址
 	Area        *AreaModel `json:"area"`                                                         // 地区
+	// 型号
+	Model string `json:"model" gorm:"not null;comment:型号" binding:"required"`
 }
 
 func (d *DeviceModel) AfterCreate(tx *gorm.DB) (err error) {
@@ -29,12 +32,16 @@ func (d *DeviceModel) AfterCreate(tx *gorm.DB) (err error) {
 		if err != nil {
 			return fmt.Errorf("端口号错误")
 		}
-		global.HikGateway.RegisterHikGateway(hk_gateway.HikConfig{
+		if err = global.HikGateway.RegisterHikGateway(hk_gateway.HikConfig{
 			Ip:       d.Host,
 			Port:     port,
 			Username: d.HikUsername,
 			Password: d.HikPassword,
-		})
+		}); err != nil {
+			// 删除设备
+			tx.Delete(d)
+			return err
+		}
 	}
 
 	return

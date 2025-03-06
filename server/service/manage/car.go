@@ -32,6 +32,10 @@ func (as *CarService) CreateCar(req mangeReq.AddCar) (carModel mangeModel.CarMod
 		StartTime: req.StartTime,
 		EndTime:   req.EndTime,
 		Areas:     areas,
+		CarType:   req.CarType,
+		ListType:  req.ListType,
+		Color:     req.Color,
+		CardNo:    req.CarType,
 	}
 	err = global.TD27_DB.Create(&carModel).Error
 	return
@@ -55,8 +59,12 @@ func (as *CarService) EditCar(req mangeReq.EditCar) (carModel mangeModel.CarMode
 	carModel.EndTime = req.EndTime
 	carModel.Phone = req.Phone
 	carModel.Areas = areas
-	err = global.TD27_DB.Save(&carModel).Error
+	carModel.CarType = req.CarType
+	carModel.ListType = req.ListType
+	carModel.Color = req.Color
+	carModel.CardNo = req.CardNo
 	global.TD27_DB.Model(&carModel).Association("Areas").Replace(areas)
+	err = global.TD27_DB.Save(&carModel).Error
 	return
 }
 

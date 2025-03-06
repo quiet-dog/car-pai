@@ -105,10 +105,42 @@ const {
                             :label="item.name" />
                     </el-select>
                 </el-form-item>
+                <el-form-item label="黑白名单" prop="listType">
+                    <el-select v-model="formData.listType" placeholder="Select" size="large">
+                        <el-option label="白名单" value="0" />
+                        <el-option label="黑名单" value="1" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="卡号" prop="cardNo">
+                    <el-input v-model="formData.cardNo" placeholder="请输入卡号" />
+                </el-form-item>
                 <el-form-item label="有效期" prop="startTime">
                     <el-date-picker @change="handleChangePicker" v-model="timePicker" type="datetimerange"
                         start-placeholder="开始时间" end-placeholder="结束时间" format="YYYY-MM-DD HH:mm:ss"
                         date-format="YYYY/MM/DD ddd" time-format="A hh:mm:ss" value-format="x" />
+                </el-form-item>
+                <el-form-item label="车牌类型" prop="carType">
+                    <el-select v-model="formData.carType" placeholder="Select" size="large">
+                        <el-option label="标准民用用车与军车" value="0" />
+                        <el-option label="02式民用车牌" value="1" />
+                        <el-option label="武警车" value="2" />
+                        <el-option label="警车" value="3" />
+                        <el-option label="民用车双行尾牌" value="4" />
+                        <el-option label="使馆车牌" value="5" />
+                        <el-option label="农用车牌" value="6" />
+                        <el-option label="摩托车牌" value="7" />
+                        <el-option label="新能源车牌" value="8" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="颜色" prop="color">
+                    <el-select v-model="formData.color" placeholder="Select" size="large">
+                        <el-option label="蓝色" value="0" />
+                        <el-option label="黄色" value="1" />
+                        <el-option label="白色" value="2" />
+                        <el-option label="黑色" value="3" />
+                        <el-option label="绿色" value="4" />
+                        <el-option label="其它" value="5" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="车主姓名" prop="name">
                     <el-input v-model="formData.name" placeholder="请输入车主姓名" />

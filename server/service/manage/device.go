@@ -28,6 +28,8 @@ func (as *DeviceService) CreateDevice(req mangeReq.AddDevice) (deviceModel mange
 		Remark:      req.Remark,
 		AreaId:      req.AreaId,
 		Type:        req.Type,
+		Rtsp:        req.Rtsp,
+		Model:       req.Model,
 	}
 	err = global.TD27_DB.Create(&deviceModel).Error
 	return
@@ -48,6 +50,8 @@ func (as *DeviceService) EditDevice(req mangeReq.EditDevice) (deviceModel mangeM
 	deviceModel.Remark = req.Remark
 	deviceModel.AreaId = req.AreaId
 	deviceModel.Type = req.Type
+	deviceModel.Rtsp = req.Rtsp
+	deviceModel.Model = req.Model
 	err = global.TD27_DB.Save(&deviceModel).Error
 	return
 }

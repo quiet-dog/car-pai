@@ -98,6 +98,7 @@ func RegisterTables(db *gorm.DB) {
 		modelManage.AreaModel{},
 		modelManage.DeviceModel{},
 		modelManage.CarModel{},
+		modelManage.CarLogModel{},
 	)
 
 	if err != nil {

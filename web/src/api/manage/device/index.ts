@@ -15,6 +15,8 @@ export interface AddDevice {
     remark?: string
     type: string
     areaId: number
+    rtsp: string
+    model:string
 }
 
 export interface EditDevice extends CId,AddDevice { 

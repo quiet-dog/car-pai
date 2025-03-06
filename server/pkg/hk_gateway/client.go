@@ -3,6 +3,7 @@ package hk_gateway
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"time"
@@ -90,13 +91,13 @@ func NewOnlyHikClinet(conf HikConfig) (hikClient *HikClient, err error) {
 func newHikClinet(conf HikConfig) (hikClient *HikClient, err error) {
 	hikClient = &HikClient{
 		hikConfig: conf,
-		client:    resty.New().SetBaseURL(fmt.Sprintf("http://%s:%d", conf.Ip, conf.Port)).SetTimeout(3 * time.Second),
+		client:    resty.New().SetBaseURL(fmt.Sprintf("%s:%d", conf.Ip, conf.Port)).SetTimeout(3 * time.Second),
 		isConnect: false,
 	}
 
 	// 开启长连接
-	if _, err = hikClient.UserCheck(); err != nil {
-	}
+	// if _, err = hikClient.UserCheck(); err != nil {
+	// }
 	hikClient.isConnect = true
 
 	return hikClient, err
@@ -878,6 +879,7 @@ func (c *HikClient) GetDeviceInfo() (result *DeviceInfo, err error) {
 	return result, nil
 }
 
+// 设置车拍
 func (c *HikClient) SetVCLData(reqBody SetVCLDataReq) (err error) {
 
 	xmlData, err := xml.Marshal(reqBody)
@@ -885,6 +887,7 @@ func (c *HikClient) SetVCLData(reqBody SetVCLDataReq) (err error) {
 		return
 	}
 	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	fmt.Println("xmlWithHer", string(xmlWithHeader))
 	req := ReqInitParam{
 		Url: "/ISAPI/ITC/Entrance/VCL",
 		// Query: map[string]string{
@@ -897,6 +900,10 @@ func (c *HikClient) SetVCLData(reqBody SetVCLDataReq) (err error) {
 		Headers: map[string]string{
 			"Content-Type": "application/xml",
 		},
+	}
+
+	if reqBody.VCLDataList.SingleVCLData[0].CreateTime != "" {
+		req.Url = "ISAPI/Traffic/channels/1licensePlateAuditData/record"
 	}
 
 	if err = c.Do(req); err != nil {
@@ -933,18 +940,48 @@ func (c *HikClient) VCLGetCond(reqBody SetVCLDataReq) (err error) {
 	return
 }
 
-func (c *HikClient) VCLDelCond(reqBody VCLDelCondReq) (result *ErrorMsg, err error) {
+func (c *HikClient) TCG225EVCLGetCond(reqBody TCG225EVCLGetCondReq) (err error) {
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+
+	fmt.Println("请求信息", string(jsonData))
+
+	req := ReqInitParam{
+		Url: "/ISAPI/Traffic/channels/1/licensePlateAuditData/record",
+		// Query: map[string]string{
+		// 	"format": "json",
+		// },
+		Body:   jsonData,
+		Result: nil,
+		Method: Put,
+		Headers: map[string]string{
+			"Content-Type": "application/json,charset=utf-8",
+		},
+	}
+
+	// if reqBody.VCLDataList.SingleVCLData[0].CreateTime != "" {
+	// 	req.Url = "ISAPI/Traffic/channels/1licensePlateAuditData/record"
+	// }
+	err = c.Do(req)
+	return
+}
+
+func (c *HikClient) VCLDelCond(reqBody VCLDelCondReq) (err error) {
 	xmlData, err := xml.Marshal(reqBody)
 	if err != nil {
 		return
 	}
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	fmt.Println("请求信息", string(xmlWithHeader))
 	req := ReqInitParam{
 		Url: "/ISAPI/ITC/Entrance/VCL",
 		// Query: map[string]string{
 		// 	"format": "json",
 		// },
-		Body:   xmlData,
-		Result: &result,
+		Body:   xmlWithHeader,
+		Result: nil,
 		Method: Delete,
 		Headers: map[string]string{
 			"Content-Type": "application/xml",
@@ -956,6 +993,85 @@ func (c *HikClient) VCLDelCond(reqBody VCLDelCondReq) (result *ErrorMsg, err err
 	return
 }
 
-func (c *HikClient) StartAlarmGuard() {
+// 获取车牌列表
+func (c *HikClient) VCLGetList(reqBody VCLGetListReq) (res *VCLGetListRes, err error) {
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
 
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	req := ReqInitParam{
+		Url:    "/ISAPI/ITC/Entrance/VCL",
+		Method: Post,
+		Body:   xmlWithHeader,
+		Result: &res,
+	}
+	err = c.Do(req)
+	return
+}
+
+func (c *HikClient) TCG225EVCLDelCond(reqBody TCG225EVCLDelCondReq) (err error) {
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+
+	req := ReqInitParam{
+		Url:    "/ISAPI/Traffic/channels/1/DelLicensePlateAuditData",
+		Body:   jsonData,
+		Result: nil,
+		Method: Put,
+		Headers: map[string]string{
+			"Content-Type": "application/json,charset=utf-8",
+		},
+	}
+
+	err = c.Do(req)
+	return
+}
+
+func (c *HikClient) VCLSearch(reqBody CMSearchDescriptionReq) (result *CMSearchResult, err error) {
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	fmt.Println("请求信息", string(xmlWithHeader))
+	req := ReqInitParam{
+		Url:    "/ISAPI/ITC/ContentMgmt/logSearch",
+		Body:   xmlWithHeader,
+		Result: &result,
+		Method: Post,
+		Headers: map[string]string{
+			"Content-Type": "application/xml",
+		},
+	}
+	if err = c.Do(req); err != nil {
+		return
+	}
+	return
+}
+
+func (c *HikClient) ZhuaPaiSeach(reqBody ZhuaPaiCMSearchDescription) (result *CMSearchResult, err error) {
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	// xmlWithHeader = []byte("<?xml version='1.0' encoding='utf-8'?><CMSearchDescription><searchID>CB1A4C1D-AC20-0001-81AD-153015A011BD</searchID><trackIDList><trackID>120</trackID></trackIDList><timeSpanList><timeSpan><startTime>2025-01-25T00:00:00Z</startTime><endTime>2025-02-25T23:59:59Z</endTime><laneNumber></laneNumber><carType>all</carType><illegalType>all</illegalType></timeSpan></timeSpanList><contentTypeList><contentType>metadata</contentType></contentTypeList><maxResults>40</maxResults><searchResultPostion>280</searchResultPostion><metadataList><metadataDescriptor>//recordType.meta.hikvision.com/timing</metadataDescriptor></metadataList></CMSearchDescription>")
+	// fmt.Println("请求信息", string(xmlWithHeader))
+	req := ReqInitParam{
+		Url:    "/ISAPI/ITC/ContentMgmt/search",
+		Body:   xmlWithHeader,
+		Result: &result,
+		Method: Post,
+		Headers: map[string]string{
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
+	}
+	if err = c.Do(req); err != nil {
+		return
+	}
+	return
 }

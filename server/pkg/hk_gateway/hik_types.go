@@ -123,8 +123,8 @@ type TimeSpanList struct {
 }
 
 type TimeSpan struct {
-	StartTime time.Time `json:"startTime"`
-	EndTime   time.Time `json:"endTime"`
+	StartTime string `json:"startTime"`
+	EndTime   string `json:"endTime"`
 }
 
 type LogSearchRes struct {
@@ -716,8 +716,8 @@ type VCLDelCondReq struct {
 	XMLName    xml.Name `xml:"VCLDelCond"`
 	DelVCLCond int      `xml:"delVCLCond"`
 	PlateNum   string   `xml:"plateNum"`
-	PlateColor int      `xml:"plateColor"`
-	PlateType  int      `xml:"plateType"`
+	PlateColor string   `xml:"plateColor"`
+	PlateType  string   `xml:"plateType"`
 	CardNo     string   `xml:"cardNo"`
 }
 
@@ -725,13 +725,13 @@ type VCLDelCondReq struct {
 
 // SetVCLData 根元素结构体
 type SetVCLDataReq struct {
-	XMLName     xml.Name    `xml:"SetVCLData"`
-	VCLDataList VCLDataList `xml:"VCLDataList"`
+	XMLName     xml.Name    `xml:"SetVCLData" json:"SetVCLData"`
+	VCLDataList VCLDataList `xml:"VCLDataList" json:"VCLDataList"`
 }
 
 // VCLDataList 包含多个singleVCLData的列表
 type VCLDataList struct {
-	SingleVCLData []SingleVCLData `xml:"singleVCLData"`
+	SingleVCLData []SingleVCLData `xml:"singleVCLData" json:"singleVCLData"`
 }
 
 // CustomTime 自定义时间类型
@@ -746,12 +746,194 @@ func (c CustomTime) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 
 // SingleVCLData 单个车辆数据
 type SingleVCLData struct {
-	ID         int    `xml:"id"`
-	RunNum     int    `xml:"runNum"`
-	ListType   int    `xml:"listType"`
+	ID                 string `xml:"id" json:"id"`
+	RunNum             string `xml:"runNum" json:"runNum"`
+	ListType           string `xml:"listType" json:"listType"`
+	PlateNum           string `xml:"plateNum" json:"plateNum"`
+	PlateColor         string `xml:"plateColor" json:"plateColor"`
+	PlateType          string `xml:"plateType" json:"plateType"`
+	CardNo             string `xml:"cardNo" json:"cardNo"`
+	StartTime          string `xml:"startTime" json:"startTime"`
+	EndTime            string `xml:"endTime" json:"endTime"`
+	EffectiveStartDate string `xml:"effectiveStartDate" json:"effectiveStartDate"`
+	CreateTime         string `xml:"createTime" json:"createTime"`
+	EffectiveTime      string `xml:"effectiveTime" json:"effectiveTime"`
+	Operation          string `xml:"operation" json:"operation"`
+}
+
+// 定义结构体
+type VCLSeachReq struct {
+	XMLName             xml.Name        `xml:"CMSearchDescription"`
+	SearchID            string          `xml:"searchID"`
+	TrackIDList         TrackIDList     `xml:"trackIDList"`
+	TimeSpanList        TimeVCLSpanList `xml:"timeSpanList"`
+	ContentTypeList     ContentTypeList `xml:"contentTypeList"`
+	MaxResults          int             `xml:"maxResults"`
+	SearchResultPostion int             `xml:"searchResultPostion"`
+	MetadataList        MetadataList    `xml:"metadataList"`
+}
+
+type TrackIDList struct {
+	TrackID []int `xml:"trackID"`
+}
+
+type TimeVCLSpanList struct {
+	TimeSpan []TimeVCLSpan `xml:"timeSpan"`
+}
+
+type TimeVCLSpan struct {
+	StartTime   string `xml:"startTime"`
+	EndTime     string `xml:"endTime"`
+	LaneNumber  string `xml:"laneNumber"`
+	CarType     string `xml:"carType"`
+	IllegalType string `xml:"illegalType"`
+}
+
+type ContentTypeList struct {
+	ContentType []string `xml:"contentType"`
+}
+
+type MetadataList struct {
+	MetadataDescriptor []string `xml:"metadataDescriptor"`
+}
+
+type CMSearchResult struct {
+	XMLName            xml.Name  `xml:"CMSearchResult"`
+	Version            string    `xml:"version,attr"`
+	SearchID           string    `xml:"searchID"`
+	ResponseStatus     bool      `xml:"responseStatus"`
+	ResponseStatusStrg string    `xml:"responseStatusStrg"`
+	NumOfMatches       int       `xml:"numOfMatches"`
+	MatchList          MatchList `xml:"matchList"`
+}
+
+// MatchList contains a slice of SearchMatchItem
+type MatchList struct {
+	SearchMatchItems []SearchMatchItem `xml:"searchMatchItem"`
+}
+
+// SearchMatchItem represents each individual match item
+type SearchMatchItem struct {
+	LogDescriptor VCLLogDescriptor `xml:"logDescriptor"`
+}
+
+// LogDescriptor contains the details of each log entry
+type VCLLogDescriptor struct {
+	MetaID        string `xml:"metaId"`
+	StartDateTime string `xml:"StartDateTime"`
+	ParaType      string `xml:"paraType"`
+	UserName      string `xml:"userName"`
+	LogInfo       string `xml:"logInfo"`
+	IPAddress     string `xml:"ipAddress"`
+}
+
+type CMSearchDescriptionReq struct {
+	XMLName      xml.Name     `xml:"CMSearchDescription"`
+	SearchID     string       `xml:"searchID"`
+	MetaID       string       `xml:"metaId"`
+	TimeSpanList TimeSpanList `xml:"timeSpanList"`
+	MaxResults   int          `xml:"maxResults"`
+}
+
+// CMSearchDescription represents the search description structure
+type ZhuaPaiCMSearchDescription struct {
+	XMLName              xml.Name               `xml:"CMSearchDescription"`
+	SearchID             string                 `xml:"searchID"`
+	TrackIDList          ZhuaPaiTrackIDList     `xml:"trackIDList"`
+	TimeSpanList         ZhuaPaiTimeSpanList    `xml:"timeSpanList"`
+	ContentTypeList      ZhuaPaiContentTypeList `xml:"contentTypeList"`
+	MaxResults           int                    `xml:"maxResults"`
+	SearchResultPosition int                    `xml:"searchResultPostion"` // Note: "Postion" is likely a typo in the XML, should be "Position"
+	MetadataList         MetadataList           `xml:"metadataList"`
+}
+
+type ZhuaPaiTrackIDList struct {
+	TrackIDs []int `xml:"trackID"`
+}
+
+type ZhuaPaiContentTypeList struct {
+	ContentType []string `xml:"contentType"`
+}
+
+// TrackIDList contains a slice of track IDs
+
+// TimeSpanList contains a slice of TimeSpan elements
+type ZhuaPaiTimeSpanList struct {
+	TimeSpans []TimeSpan `xml:"timeSpan"`
+}
+
+// TimeSpan represents a single time range with additional search parameters
+type ZhuaPaiTimeSpan struct {
+	StartTime   string `xml:"startTime"`
+	EndTime     string `xml:"endTime"`
+	LaneNumber  string `xml:"laneNumber"`
+	CarType     string `xml:"carType"`
+	IllegalType string `xml:"illegalType"`
+}
+
+type TCG225EVCLGetCondReq struct {
+	LicensePlateInfo []LicensePlateInfo `json:"LicensePlateInfoList"`
+}
+
+type LicensePlateInfo struct {
+	ID                 string `json:"id"`
+	PlateColor         string `json:"plateColor"`
+	PlateType          string `json:"plateType"`
+	ListType           string `json:"listType"`
+	LicensePlate       string `json:"LicensePlate"`
+	CardNo             string `json:"cardNo"`
+	CardID             string `json:"cardID"`
+	CreateTime         string `json:"createTime"`
+	EffectiveStartDate string `json:"effectiveStartDate"`
+	EffectiveTime      string `json:"effectiveTime"`
+	Operation          string `json:"operation"`
+}
+
+type LicensePlateInfoList struct {
+	LicensePlateInfoList []LicensePlateInfo `json:"LicensePlateInfoList"`
+}
+
+type TCG225EVCLDelCondReq struct {
+	DeleteAllEnabled bool         `json:"deleteAllEnabled"`
+	CompoundCond     CompoundCond `json:"CompoundCond"`
+}
+
+type CompoundCond struct {
+	PlateColor   string `json:"plateColor"`
+	LicensePlate string `json:"licensePlate"`
+}
+
+// TimeSpanList contains a slice of TimeSpan elements
+type VCLGetListReq struct {
+	XMLName     xml.Name `xml:"VCLGetCond"`
+	GetVCLNum   int      `xml:"getVCLNum"`
+	StartOffSet int      `xml:"startOffSet"`
+	GetVCLCond  int      `xml:"getVCLCond"`
+	ListType    int      `xml:"listType"`
+	PlateNum    string   `xml:"plateNum"`
+	CardNo      string   `xml:"cardNo"`
+}
+
+type VCLGetListRes struct {
+	XMLName      xml.Name       `xml:"VCLData"`
+	Version      string         `xml:"version,attr"`
+	XMLNS        string         `xml:"xmlns,attr"`
+	CurrentUpNum int            `xml:"currentUpNum"`
+	TotalNum     int            `xml:"totalNum"`
+	VCLDataList  VCLDataListRes `xml:"VCLDataList"`
+}
+
+type VCLDataListRes struct {
+	SingleVCLData []SingleVCLDataRes `xml:"singleVCLData"`
+}
+
+type SingleVCLDataRes struct {
+	ID         string `xml:"id"`
+	RunNum     string `xml:"runNum"`
+	ListType   string `xml:"listType"`
+	PlateType  string `xml:"plateType"`
+	PlateColor string `xml:"plateColor"`
 	PlateNum   string `xml:"plateNum"`
-	PlateColor int    `xml:"plateColor"`
-	PlateType  int    `xml:"plateType"`
 	CardNo     string `xml:"cardNo"`
 	StartTime  string `xml:"startTime"`
 	EndTime    string `xml:"endTime"`

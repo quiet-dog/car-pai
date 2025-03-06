@@ -24,7 +24,7 @@ export function useDeviceHook() {
 
     const dialogVisible = ref(false)
     const title = ref("")
-    const formData = reactive<DeviceModel>({
+    let formData = ref<DeviceModel>({
         id: 0,
         host: "",
         port: "",
@@ -35,6 +35,8 @@ export function useDeviceHook() {
         remark: "",
         type: "海康",
         areaId: 0,
+        rtsp: "",
+        model: "DS-TCG225"
     })
     const kind = ref("add")
     const mpFormRules: FormRules = reactive({
@@ -78,6 +80,16 @@ export function useDeviceHook() {
                 }
             }
         ],
+        rtsp: [
+            {
+                required: true, message: "请输入rtsp地址", trigger: "blur"
+            }
+        ],
+        model: [
+            {
+                required: true, message: "请选择型号", trigger: "blur"
+            }
+        ]
     })
 
     const handleSearch = () => {
@@ -124,6 +136,20 @@ export function useDeviceHook() {
     }
 
     const handleClose = (formRef: FormInstance) => {
+        formData.value = {
+            id: 0,
+            host: "",
+            port: "",
+            hikUsername: "",
+            hikPassword: "",
+            dhUsername: "",
+            dhPassword: "",
+            remark: "",
+            type: "海康",
+            areaId: 0,
+            rtsp: "",
+            model: "DS-TCG225"
+        }
         formRef.resetFields();
     }
 
@@ -134,25 +160,27 @@ export function useDeviceHook() {
     const operateAction = (formRef: FormInstance) => {
         formRef.validate(async (valid) => {
             if (valid) {
-                if (formData.type == "海康") {
-                    formData.dhUsername = ""
-                    formData.dhPassword = ""
+                if (formData.value.type == "海康") {
+                    formData.value.dhUsername = ""
+                    formData.value.dhPassword = ""
                 } else {
-                    formData.hikUsername = ""
-                    formData.hikPassword = ""
+                    formData.value.hikUsername = ""
+                    formData.value.hikPassword = ""
                 }
 
                 if (kind.value === "Add") {
                     const res = await createDeviceApi({
-                        host: formData.host,
-                        port: formData.port,
-                        hikUsername: formData.hikUsername,
-                        hikPassword: formData.hikPassword,
-                        dhUsername: formData.dhUsername,
-                        dhPassword: formData.dhPassword,
-                        remark: formData.remark,
-                        type: formData.type,
-                        areaId: Number(formData.areaId)
+                        host: formData.value.host,
+                        port: formData.value.port,
+                        hikUsername: formData.value.hikUsername,
+                        hikPassword: formData.value.hikPassword,
+                        dhUsername: formData.value.dhUsername,
+                        dhPassword: formData.value.dhPassword,
+                        remark: formData.value.remark,
+                        type: formData.value.type,
+                        areaId: Number(formData.value.areaId),
+                        rtsp: formData.value.rtsp,
+                        model: formData.value.model
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
@@ -160,16 +188,18 @@ export function useDeviceHook() {
                     }
                 } else if (kind.value === "Edit") {
                     const res = await editDeviceApi({
-                        id: formData.id,
-                        host: formData.host,
-                        port: formData.port,
-                        hikUsername: formData.hikUsername,
-                        hikPassword: formData.hikPassword,
-                        dhUsername: formData.dhUsername,
-                        dhPassword: formData.dhPassword,
-                        remark: formData.remark,
-                        type: formData.type,
-                        areaId: Number(formData.areaId)
+                        id: formData.value.id,
+                        host: formData.value.host,
+                        port: formData.value.port,
+                        hikUsername: formData.value.hikUsername,
+                        hikPassword: formData.value.hikPassword,
+                        dhUsername: formData.value.dhUsername,
+                        dhPassword: formData.value.dhPassword,
+                        remark: formData.value.remark,
+                        type: formData.value.type,
+                        areaId: Number(formData.value.areaId),
+                        rtsp: formData.value.rtsp,
+                        model: formData.value.model
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
@@ -186,16 +216,18 @@ export function useDeviceHook() {
 
     const handleRow = (row: DeviceModel, t: string) => {
         if (t === "Edit") {
-            formData.id = row.id
-            formData.host = row.host
-            formData.port = row.port
-            formData.hikUsername = row.hikUsername
-            formData.hikPassword = row.hikPassword
-            formData.dhUsername = row.dhUsername
-            formData.dhPassword = row.dhPassword
-            formData.remark = row.remark
-            formData.type = row.type
-            formData.areaId = row.areaId
+            formData.value.id = row.id
+            formData.value.host = row.host
+            formData.value.port = row.port
+            formData.value.hikUsername = row.hikUsername
+            formData.value.hikPassword = row.hikPassword
+            formData.value.dhUsername = row.dhUsername
+            formData.value.dhPassword = row.dhPassword
+            formData.value.remark = row.remark
+            formData.value.type = row.type
+            formData.value.areaId = row.areaId
+            formData.value.rtsp = row.rtsp
+            formData.value.model = row.model
             handleOpen("Edit")
         } else {
             ElMessageBox.alert("确定删除该区域吗?", "提示", {

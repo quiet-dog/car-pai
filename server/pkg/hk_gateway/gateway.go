@@ -151,10 +151,10 @@ func (h *HikGateway) RegisterHikGateway(hikConfig HikConfig) (err error) {
 		return errors.New("已经注册")
 	}
 
-	hikClient, _ := newHikClinet(hikConfig)
-	// if err != nil {
-	// 	return
-	// }
+	hikClient, err := NewOnlyHikClinet(hikConfig)
+	if err != nil {
+		return
+	}
 
 	h.hikMap.Store(hikConfig.Ip, hikClient)
 
@@ -405,6 +405,7 @@ func (h *HikGateway) GetDoorThreeInfo(ip string) (doorAcsEventLogs *GetAcsEventR
 
 }
 
+// 更改车牌号
 func (h *HikGateway) SetVCLData(ip string, data SetVCLDataReq) (err error) {
 	h.hikMap.Range(func(key, value any) bool {
 		if key.(string) == ip {
@@ -416,6 +417,7 @@ func (h *HikGateway) SetVCLData(ip string, data SetVCLDataReq) (err error) {
 	return
 }
 
+// 设置车牌号
 func (h *HikGateway) VCLGetCond(ip string, data SetVCLDataReq) (err error) {
 	h.hikMap.Range(func(key, value any) bool {
 		if key.(string) == ip {
@@ -427,10 +429,46 @@ func (h *HikGateway) VCLGetCond(ip string, data SetVCLDataReq) (err error) {
 	return
 }
 
-func (h *HikGateway) VCLDelCond(ip string, data VCLDelCondReq) (r *ErrorMsg, err error) {
+func (h *HikGateway) TCG225EVCLGetCond(ip string, data TCG225EVCLGetCondReq) (err error) {
 	h.hikMap.Range(func(key, value any) bool {
 		if key.(string) == ip {
-			r, err = value.(*HikClient).VCLDelCond(data)
+			err = value.(*HikClient).TCG225EVCLGetCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+// 删除车牌号
+func (h *HikGateway) VCLDelCond(ip string, data VCLDelCondReq) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).VCLDelCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+// 删除车牌号
+func (h *HikGateway) TCG225EVCLDelCond(ip string, data TCG225EVCLDelCondReq) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).TCG225EVCLDelCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+// 获取车牌号列表
+func (h *HikGateway) VCLGetList(ip string, data VCLGetListReq) (result *VCLGetListRes, err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			result, err = value.(*HikClient).VCLGetList(data)
 			return false
 		}
 		return true

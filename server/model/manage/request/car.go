@@ -12,6 +12,10 @@ type AddCar struct {
 	EndTime   int64  `json:"endTime"`                   // 结束时间
 	AreaIDs   []uint `json:"areaIds"`                   // 地区ID
 	Remark    string `json:"remark"`                    // 备注
+	Color     string `json:"color"`                     // 颜色
+	CarType   string `json:"carType"`                   // 车辆类型
+	ListType  string `json:"listType"`                  // 名单类型 0白 1 黑
+	CardNo    string `json:"cardNo"`                    // 卡号
 }
 
 type EditCar struct {

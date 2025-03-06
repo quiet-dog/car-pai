@@ -35,6 +35,10 @@ export function useCarHook() {
         startTime: 0,
         endTime: 0,
         remark: "",
+        color: "0",
+        carType: "0",
+        listType: "0",
+        cardNo: ""
     })
     const kind = ref("add")
     const mpFormRules: FormRules = reactive({
@@ -130,7 +134,11 @@ export function useCarHook() {
                         phone: formData.phone,
                         carNum: formData.carNum,
                         startTime: formData.startTime,
-                        endTime: formData.endTime
+                        endTime: formData.endTime,
+                        carType: formData.carType,
+                        listType: formData.listType,
+                        color: formData.color,
+                        cardNo: formData.cardNo
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
@@ -145,7 +153,11 @@ export function useCarHook() {
                         phone: formData.phone,
                         carNum: formData.carNum,
                         startTime: formData.startTime,
-                        endTime: formData.endTime
+                        endTime: formData.endTime,
+                        carType: formData.carType,
+                        listType: formData.listType,
+                        color: formData.color,
+                        cardNo: formData.cardNo
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
@@ -171,6 +183,9 @@ export function useCarHook() {
             formData.startTime = row.startTime
             formData.endTime = row.endTime
             timePicker.value = [row.startTime!, row.endTime!] as any
+            formData.carType = row.carType
+            formData.listType = row.listType
+            formData.color = row.color
             handleOpen("Edit")
         } else {
             ElMessageBox.alert("确定删除该车牌号吗?", "提示", {

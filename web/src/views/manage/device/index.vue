@@ -57,6 +57,8 @@ const {
                     <el-table-column prop="hikPassword" label="海康密码" min-width="200" />
                     <el-table-column prop="dhUsername" label="大华用户名" min-width="200" />
                     <el-table-column prop="dhPassword" label="大华密码" min-width="200" />
+                    <el-table-column prop="rtsp" label="流地址" min-width="200" />
+                    <el-table-column prop="model" label="型号" min-width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200" />
                     <el-table-column prop="createdAt" label="创建时间">
                         <template #default="scope">
@@ -99,6 +101,15 @@ const {
                     <el-select v-model="formData.areaId" placeholder="选择区域" style="width: 240px">
                         <el-option v-for="item in selectAreaOption" :label="item.name" :value="item.id" />
                     </el-select>
+                </el-form-item>
+                <el-form-item label="流地址" prop="rtsp">
+                    <el-input v-model="formData.rtsp" placeholder="请输入流地址" />
+                </el-form-item>
+                <el-form-item v-if="formData.type == '海康'" label="型号" prop="model">
+                    <el-radio-group v-model="formData.model">
+                        <el-radio value="DS-TCG225">DS-TCG225</el-radio>
+                        <el-radio value="DS-TCG205-E">DS-TCG205-E</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="formData.type == '海康'" label="海康用户名" prop="hikUsername">
                     <el-input v-model="formData.hikUsername" placeholder="请输入海康用户名" />

@@ -31,9 +31,9 @@ type ReqInitParam struct {
 
 func (c *HikClient) Do(param ReqInitParam) (err error) {
 
-	if param.Url != "/ISAPI/Security/userCheck" && !c.isConnect {
-		return errors.New("未连接")
-	}
+	// if param.Url != "/ISAPI/Security/userCheck" && !c.isConnect {
+	// 	return errors.New("未连接")
+	// }
 
 	resClient := resty.New()
 	if param.Headers == nil {
@@ -101,6 +101,7 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 				}
 				return
 			}
+			fmt.Println("打印响应的内容", string(resp.Body()))
 			if err = xml.Unmarshal(resp.Body(), param.Result); err != nil {
 				fmt.Printf("xml 解析失败 验证后  %s", err.Error())
 				return fmt.Errorf("xml 解析失败 验证后1  %s", err.Error())
@@ -144,6 +145,7 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 		{
 			param.Result.(*bytes.Buffer).Write(resp.Body())
 		}
+
 	default:
 		{
 			if resp.StatusCode() != 200 {

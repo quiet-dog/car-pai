@@ -10,6 +10,10 @@ export interface AddCar {
     startTime?: number
     endTime?: number
     remark?: string
+    color:string
+    carType:string
+    listType:string
+    cardNo?:string
 }
 
 export interface CarModel extends Omit<AddCar, "areaIds"> {
@@ -19,7 +23,7 @@ export interface CarModel extends Omit<AddCar, "areaIds"> {
 
 export interface EditCar extends CId,AddCar { }
 
-export interface SearchCar extends PageInfo, Omit<AddCar,"areaIds"> { 
+export interface SearchCar extends PageInfo, Omit<AddCar,"areaIds"|"carType"|"listType"|"color"> { 
     areaId:number
 }
 

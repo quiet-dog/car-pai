@@ -11,7 +11,9 @@ type AddDevice struct {
 	DhPassword  string `json:"dhPassword"`                // 密码
 	Remark      string `json:"remark"`                    // 备注
 	AreaId      uint   `json:"areaId" binding:"required"` // 地区ID
+	Rtsp        string `json:"rtsp" binding:"required"`   // RTSP地址
 	Type        string `json:"type" binding:"required"`   // 设备类型
+	Model       string `json:"model" binding:"required"`
 }
 
 type EditDevice struct {

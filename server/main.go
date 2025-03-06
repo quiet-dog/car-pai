@@ -14,9 +14,10 @@ func main() {
 	global.TD27_VP = core.Viper() // 初始化viper
 	global.TD27_LOG = core.Zap()  // 初始化zap日志
 	zap.ReplaceGlobals(global.TD27_LOG)
-	global.TD27_DB = initialize.Gorm()       // gorm连接数据库
-	initialize.Redis()                       // 初始化redis
-	initialize.InitHikGateway()              // 初始化海康威视
+	global.TD27_DB = initialize.Gorm() // gorm连接数据库
+	initialize.Redis()                 // 初始化redis
+	initialize.InitHikGateway()        // 初始化海康威视
+	initialize.Hik()
 	global.TD27_CRON = initialize.InitCron() // 初始化cron
 	initialize.CheckCron()                   // start cron entry, if exists
 	if global.TD27_DB == nil {
