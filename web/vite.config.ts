@@ -85,6 +85,6 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
         iconDirs: [path.resolve(process.cwd(), "src/icons/svg")],
         symbolId: "icon-[dir]-[name]"
       })
-    ]
+    ],
   }
 }

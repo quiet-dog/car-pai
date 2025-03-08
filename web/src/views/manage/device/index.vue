@@ -109,6 +109,7 @@ const {
                     <el-radio-group v-model="formData.model">
                         <el-radio value="DS-TCG225">DS-TCG225</el-radio>
                         <el-radio value="DS-TCG205-E">DS-TCG205-E</el-radio>
+                        <el-radio value="DS-TCG2A5-E">DS-TCG2A5-E</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="formData.type == '海康'" label="海康用户名" prop="hikUsername">

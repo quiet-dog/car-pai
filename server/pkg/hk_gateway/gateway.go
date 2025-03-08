@@ -440,6 +440,17 @@ func (h *HikGateway) TCG225EVCLGetCond(ip string, data TCG225EVCLGetCondReq) (er
 	return
 }
 
+func (h *HikGateway) TCG2A5EVCLGetCond(ip string, data SetVCLDataReq) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).TCG2A5EVCLGetCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
 // 删除车牌号
 func (h *HikGateway) VCLDelCond(ip string, data VCLDelCondReq) (err error) {
 	h.hikMap.Range(func(key, value any) bool {

@@ -92,7 +92,9 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 			}
 			if param.Result == nil {
 				res := ResponseStatus{}
-				fmt.Println("打印响应的内容", string(resp.Body()))
+				if res.StatusCode == 200 {
+					return
+				}
 				if err := xml.Unmarshal(resp.Body(), &res); err != nil {
 					return errors.New("xml json 解析失败12" + err.Error())
 				}
@@ -145,7 +147,6 @@ func (c *HikClient) Do(param ReqInitParam) (err error) {
 		{
 			param.Result.(*bytes.Buffer).Write(resp.Body())
 		}
-
 	default:
 		{
 			if resp.StatusCode() != 200 {

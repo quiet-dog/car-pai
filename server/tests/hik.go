@@ -3,15 +3,16 @@ package main
 import (
 	"fmt"
 	"server/pkg/hk_gateway"
+	"time"
 )
 
 func main() {
 
 	c, err := hk_gateway.NewOnlyHikClinet(hk_gateway.HikConfig{
-		Ip:       "http://10.9.9.8",
+		Ip:       "http://10.9.0.243",
 		Port:     80,
 		Username: "admin",
-		Password: "Admin12345",
+		Password: "admin12345",
 		// Ip:       "http://192.168.5.9",
 		// Port:     80,
 		// Username: "admin",
@@ -31,28 +32,28 @@ func main() {
 	// for {
 
 	// }
-	// data := hk_gateway.SetVCLDataReq{
-	// 	VCLDataList: hk_gateway.VCLDataList{
-	// 		SingleVCLData: []hk_gateway.SingleVCLData{
-	// 			{
-	// 				ID:         "",
-	// 				RunNum:     "0",
-	// 				ListType:   "0",
-	// 				PlateNum:   "苏EEEEEEW",
-	// 				PlateColor: "0",
-	// 				PlateType:  "2",
-	// 				CardNo:     "",
-	// 				Operation:  "new",
-	// 				// 使用CustomTime，强制输出"0000-00-00T00:00:00Z"
-	// 				// StartTime:          time.Now().UTC().Format("2006-01-02T15:04:05Z"),
-	// 				// EndTime:            time.Now().UTC().Add(time.Hour).Format("2006-01-02T15:04:05Z"),
-	// 				CreateTime:         time.Now().UTC().Add(time.Hour * 8).Format("2006-01-02T15:04:05Z"),
-	// 				EffectiveTime:      time.Now().UTC().Add(time.Hour * 9).Format("2006-01-02T15:04:05Z"),
-	// 				EffectiveStartDate: time.Now().UTC().Format("2006-01-02"),
-	// 			},
-	// 		},
-	// 	},
-	// }
+	data := hk_gateway.SetVCLDataReq{
+		VCLDataList: hk_gateway.VCLDataList{
+			SingleVCLData: []hk_gateway.SingleVCLData{
+				{
+					ID:         "",
+					RunNum:     "0",
+					ListType:   "0",
+					PlateNum:   "苏EEEEEEW",
+					PlateColor: "0",
+					PlateType:  "2",
+					CardNo:     "",
+					Operation:  "new",
+					// 使用CustomTime，强制输出"0000-00-00T00:00:00Z"
+					StartTime: time.Now().UTC().Format("2006-01-02T15:04:05Z"),
+					EndTime:   time.Now().UTC().Add(time.Hour).Format("2006-01-02T15:04:05Z"),
+					// CreateTime:         time.Now().UTC().Add(time.Hour * 8).Format("2006-01-02T15:04:05Z"),
+					// EffectiveTime:      time.Now().UTC().Add(time.Hour * 9).Format("2006-01-02T15:04:05Z"),
+					// EffectiveStartDate: time.Now().UTC().Format("2006-01-02"),
+				},
+			},
+		},
+	}
 
 	// data := hk_gateway.TCG225EVCLGetCondReq{}
 	// data.LicensePlateInfo = append(data.LicensePlateInfo, hk_gateway.LicensePlateInfo{
@@ -77,14 +78,14 @@ func main() {
 	// 	CardNo:     "123211",
 	// }
 
-	data := hk_gateway.TCG225EVCLDelCondReq{
-		DeleteAllEnabled: false,
-		CompoundCond: hk_gateway.CompoundCond{
-			PlateColor:   "blue",
-			LicensePlate: "苏EEEEEEB",
-		},
-	}
-	err = c.TCG225EVCLDelCond(data)
+	// data := hk_gateway.TCG225EVCLDelCondReq{
+	// 	DeleteAllEnabled: false,
+	// 	CompoundCond: hk_gateway.CompoundCond{
+	// 		PlateColor:   "blue",
+	// 		LicensePlate: "苏EEEEEEB",
+	// 	},
+	// }
+	err = c.TCG2A5EVCLGetCond(data)
 	if err != nil {
 		fmt.Println("VCLGetCond失败")
 		panic(err)

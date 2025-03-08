@@ -74,6 +74,37 @@ func (c *CarModel) AfterCreate(tx *gorm.DB) (err error) {
 				err = global.HikGateway.SetVCLData(v.Host, data)
 			}
 
+			if v.Model == "DS-TCG2A5-E" {
+
+				/**
+					ID:         "",
+				RunNum:     "0",
+				ListType:   "0",
+				PlateNum:   "苏EEEEEEW",
+				PlateColor: "0",
+				PlateType:  "2",
+				CardNo:     "",
+				Operation:  "new",
+				// 使用CustomTime，强制输出"0000-00-00T00:00:00Z"
+				StartTime: time.Now().UTC().Format("2006-01-02T15:04:05Z"),
+				EndTime:   time.Now().UTC().Add(time.Hour).Format("2006-01-02T15:04:05Z"),*/
+				data := hk_gateway.SetVCLDataReq{}
+				vclDataList := hk_gateway.VCLDataList{}
+				singlieVCLData := hk_gateway.SingleVCLData{}
+				singlieVCLData.RunNum = "0"
+				singlieVCLData.ListType = c.ListType
+				singlieVCLData.PlateNum = c.CarNum
+				singlieVCLData.PlateColor = c.ListType
+				singlieVCLData.PlateType = c.CarType
+				singlieVCLData.CardNo = c.CardNo
+				singlieVCLData.Operation = "new"
+				singlieVCLData.StartTime = time.UnixMilli(c.StartTime).UTC().Add(8 * time.Hour).Format(time.RFC3339)
+				singlieVCLData.EndTime = time.UnixMilli(c.EndTime).UTC().Add(8 * time.Hour).Format(time.RFC3339)
+				vclDataList.SingleVCLData = append(vclDataList.SingleVCLData, singlieVCLData)
+				data.VCLDataList = vclDataList
+				err = global.HikGateway.TCG2A5EVCLGetCond(v.Host, data)
+			}
+
 			if v.Model == "DS-TCG205-E" {
 				data := hk_gateway.TCG225EVCLGetCondReq{}
 				lic := hk_gateway.LicensePlateInfo{}
@@ -102,7 +133,7 @@ func (c *CarModel) BeforeDelete(tx *gorm.DB) (err error) {
 	tx.Where("area_id in (?)", areaCarQuery).Find(&deviceModel)
 	for _, v := range deviceModel {
 
-		if v.Model == "DS-TCG225" {
+		if v.Model == "DS-TCG225" || v.Model == "DS-TCG2A5-E" {
 			data := hk_gateway.VCLDelCondReq{}
 			data.CardNo = c.CardNo
 			data.PlateColor = c.Color

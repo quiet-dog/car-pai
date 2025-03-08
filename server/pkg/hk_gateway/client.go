@@ -968,6 +968,32 @@ func (c *HikClient) TCG225EVCLGetCond(reqBody TCG225EVCLGetCondReq) (err error) 
 	return
 }
 
+func (c *HikClient) TCG2A5EVCLGetCond(reqBody SetVCLDataReq) (err error) {
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	req := ReqInitParam{
+		Url: "/ISAPI/ITC/Entrance/VCL",
+		// Query: map[string]string{
+		// 	"format": "json",
+		// },
+		Body:   xmlWithHeader,
+		Result: nil,
+		Method: Put,
+		Headers: map[string]string{
+			"Content-Type": "application/xml",
+		},
+	}
+
+	if err = c.Do(req); err != nil {
+		return
+	}
+	return
+}
+
 func (c *HikClient) VCLDelCond(reqBody VCLDelCondReq) (err error) {
 	xmlData, err := xml.Marshal(reqBody)
 	if err != nil {
