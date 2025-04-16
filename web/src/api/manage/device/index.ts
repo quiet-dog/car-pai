@@ -27,6 +27,12 @@ export interface SearchDevice extends PageInfo {
     areaId: number
 }
 
+
+
+export interface RemoteControl extends CIds {
+    lockStatus:"open" | "close"
+}
+
 export type DeviceListData = ListData<DeviceModel[]>
 
 export function getDeviceListApi(data: SearchDevice) {
@@ -56,6 +62,14 @@ export function editDeviceApi(data: EditDevice) {
 export function deleteDeviceApi(data: CId) {
     return request<ApiResponseData<null>>({
         url: "/manage/device/deleteDevice",
+        method: "post",
+        data
+    })
+}
+
+export function opearaRemoteApi(data: RemoteControl) {
+    return request<ApiResponseData<null>>({
+        url: "/manage/device/remoteControlValve",
         method: "post",
         data
     })

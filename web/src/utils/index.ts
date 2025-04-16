@@ -1,9 +1,17 @@
 import dayjs from "dayjs"
 import { removeConfigLayout } from "@/utils/cache/local-storage"
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 /** 格式化时间 */
 export const formatDateTime = (time: string | number | Date) => {
   return time ? dayjs(new Date(time)).format("YYYY-MM-DD HH:mm:ss") : "N/A"
+}
+
+export const formantHikDateTime = (time: string | number | Date) => {
+  return time ? dayjs(time).utc().format('YYYY-MM-DD HH:mm:ss') : 'N/A';
 }
 
 

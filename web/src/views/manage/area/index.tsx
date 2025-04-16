@@ -84,6 +84,7 @@ export function useAreaHook() {
 
     const handleClose = (formRef: FormInstance) => {
         formRef.resetFields();
+        formData.userIds = []
     }
 
     const closeDialog = () => {

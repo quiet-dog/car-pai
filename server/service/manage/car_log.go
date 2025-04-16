@@ -31,7 +31,7 @@ func (l *CarLogService) GetCarLogList(c *gin.Context, req mangeReq.SearchCarLog)
 	limit := req.PageSize
 	offset := req.PageSize * (req.Page - 1)
 
-	err = db.Order("created_at desc").Count(&total).Limit(limit).Offset(offset).Find(&list).Error
+	err = db.Preload("Device.Area").Order("created_at desc").Count(&total).Limit(limit).Offset(offset).Find(&list).Error
 
 	return
 }

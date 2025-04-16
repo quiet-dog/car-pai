@@ -69,7 +69,7 @@ func (a *CarApi) EditCar(c *gin.Context) {
 	}
 
 	if car, err := carService.EditCar(editCar); err != nil {
-		commonRes.FailWithMessage("编辑失败", c)
+		commonRes.FailWithMessage(err.Error(), c)
 		global.TD27_LOG.Error(err.Error(), zap.Error(err))
 	} else {
 		commonRes.OkWithDetailed(car, "编辑成功", c)
@@ -88,5 +88,14 @@ func (a *CarApi) DeleteCar(c *gin.Context) {
 		global.TD27_LOG.Error("删除失败", zap.Error(err))
 	} else {
 		commonRes.OkWithMessage("删除成功", c)
+	}
+}
+
+func (a *CarApi) GetSelectCar(c *gin.Context) {
+	if list, err := carService.GetCarSelect(c); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		global.TD27_LOG.Error("获取失败", zap.Error(err))
+	} else {
+		commonRes.OkWithDetailed(list, "获取成功", c)
 	}
 }

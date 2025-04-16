@@ -1,8 +1,9 @@
 <script lang='ts' setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 import { useCarLogHook } from './index.tsx';
 import { FormInstance } from 'element-plus';
-import { formatDateTime } from '@/utils/index.ts';
+import { formantHikDateTime, formatDateTime } from '@/utils/index.ts';
+// import iconv from "iconv-lite";
 
 defineOptions({
   name: "CarLog"
@@ -13,7 +14,7 @@ const {
   searchFormData, handleSearch, loading,
   handleCurrentChange, handleSizeChange,
   paginationData, handleRefresh,
-  selectAreaValue,handleSelectArea,
+  selectAreaValue, handleSelectArea,
   selectAreaOption,
   // dialogVisible, title, formData,
   // handleOpen,
@@ -23,6 +24,14 @@ const {
   // handleRow, selectUserOption
   // formRules, formRef, closeDialog, operateAction,handleClose
 } = useCarLogHook();
+
+const utf8ToGBK = (str: string) => {
+  var encoder = new TextEncoder();
+  var decoder = new TextDecoder('gbk');
+  var uint8Array = encoder.encode(str);
+  var str = decoder.decode(uint8Array);
+  return str;
+}
 </script>
 
 <template>
@@ -61,8 +70,14 @@ const {
           <el-table-column prop="uri" label="图片" min-width="200">
             <template #default="scope">
               <el-image style="width: 100px; height: 100px" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2"
-                :preview-src-list="['http://10.9.0.30:8888/preview/' + scope.row.uri + '.jpg']" show-progress
-                :initial-index="4" :preview-teleported="true" fit="cover" :src="'http://10.9.0.30:8888/preview/' + scope.row.uri + '.jpg'" f />
+                :preview-src-list="['http://10.9.0.30:8888/preview/' + scope.row.uri]" show-progress :initial-index="4"
+                :preview-teleported="true" fit="cover" :src="'http://10.9.0.30:8888/preview/' + scope.row.uri" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="device.area.name" label="抓拍区域" min-width="200"></el-table-column>
+          <el-table-column prop="subTime" label="收到时间" min-width="200">
+            <template #default="scope">
+              {{ formantHikDateTime(scope.row.subTime) }}
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200" />

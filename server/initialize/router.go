@@ -26,7 +26,7 @@ func Routers() *gin.Engine {
 
 	global.TD27_LOG.Info("register swagger handler")
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	Router.Static("/preview", "/root/testdata")
+	Router.Static("/preview", global.TD27_CONFIG.Ftp.Watch)
 
 	// 公共路由组 不需要鉴权
 	PublicGroup := Router.Group(global.TD27_CONFIG.Router.Prefix)

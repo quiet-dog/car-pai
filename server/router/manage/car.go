@@ -16,5 +16,6 @@ func (a CarRouter) InitCarRouter(Router *gin.RouterGroup) {
 		carRouter.POST("createCar", carApi.CreateCar)
 		carRouter.POST("editCar", carApi.EditCar)
 		carRouter.POST("deleteCar", carApi.DeleteCar)
+		carRouter.GET("getSelectCar", carApi.GetSelectCar)
 	}
 }

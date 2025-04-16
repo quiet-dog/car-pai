@@ -17,6 +17,6 @@ type AreaModel struct {
 }
 
 func (a *AreaModel) AfterFind(tx *gorm.DB) (err error) {
-	tx.Table("user_area").Select("user_model_id").Find(&a.UserIds)
+	tx.Table("user_area").Where("area_model_id = ?", a.ID).Select("user_model_id").Find(&a.UserIds)
 	return
 }

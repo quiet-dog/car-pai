@@ -83,3 +83,18 @@ func (a *DeviceApi) DeleteDevice(c *gin.Context) {
 		commonRes.OkWithMessage("删除成功", c)
 	}
 }
+
+func (a *DeviceApi) RemoteControlValve(c *gin.Context) {
+	var remoteControlValve manageReq.RemoteControl
+	if err := c.ShouldBindJSON(&remoteControlValve); err != nil {
+		commonRes.FailReq(err.Error(), c)
+		return
+	}
+
+	if err := deviceService.RemoteControlValve(remoteControlValve); err != nil {
+		commonRes.FailWithMessage(err.Error(), c)
+		global.TD27_LOG.Error("操作失败", zap.Error(err))
+	} else {
+		commonRes.OkWithMessage("操作成功", c)
+	}
+}

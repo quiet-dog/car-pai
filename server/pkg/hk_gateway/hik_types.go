@@ -898,6 +898,16 @@ type TCG225EVCLDelCondReq struct {
 	CompoundCond     CompoundCond `json:"CompoundCond"`
 }
 
+type TCG2A5EVCLDelCondReq struct {
+	DeleteAllEnabled bool     `json:"deleteAllEnabled"`
+	LicensePlate     []string `json:"licensePlate"`
+}
+
+// type TCG2A5EVCLDelCondReq struct {
+// 	DeleteAllEnabled bool         `json:"deleteAllEnabled"`
+// 	CompoundCond     CompoundCond `json:"CompoundCond"`
+// }
+
 type CompoundCond struct {
 	PlateColor   string `json:"plateColor"`
 	LicensePlate string `json:"licensePlate"`

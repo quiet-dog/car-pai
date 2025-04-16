@@ -1,0 +1,3 @@
+/home/zks/Projects/private/car-pai/server/third/build/CMakeFiles/HikvisionApp.dir
+/home/zks/Projects/private/car-pai/server/third/build/CMakeFiles/edit_cache.dir
+/home/zks/Projects/private/car-pai/server/third/build/CMakeFiles/rebuild_cache.dir

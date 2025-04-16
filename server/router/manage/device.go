@@ -16,5 +16,6 @@ func (a DeviceRouter) InitDeviceRouter(Router *gin.RouterGroup) {
 		deviceRouter.POST("createDevice", deviceApi.CreateDevice)
 		deviceRouter.POST("editDevice", deviceApi.EditDevice)
 		deviceRouter.POST("deleteDevice", deviceApi.DeleteDevice)
+		deviceRouter.POST("remoteControlValve", deviceApi.RemoteControlValve)
 	}
 }

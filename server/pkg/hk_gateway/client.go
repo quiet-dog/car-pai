@@ -940,6 +940,28 @@ func (c *HikClient) VCLGetCond(reqBody SetVCLDataReq) (err error) {
 	return
 }
 
+// 远程开关闸门TCG225 TCG205-E 通用
+func (c *HikClient) TCG225RemoteControlGate(reqBody TCG225BarrierGate) (err error) {
+	xmlData, err := xml.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	fmt.Println("请求信息", string(xmlWithHeader))
+	req := ReqInitParam{
+		Url:    "/ISAPI/Parking/channels/1/barrierGate",
+		Method: Put,
+		Body:   xmlWithHeader,
+		Result: nil,
+		Headers: map[string]string{
+			"Content-Type": "application/xml",
+		},
+	}
+	err = c.Do(req)
+	return
+
+}
+
 func (c *HikClient) TCG225EVCLGetCond(reqBody TCG225EVCLGetCondReq) (err error) {
 	jsonData, err := json.Marshal(reqBody)
 	if err != nil {
@@ -975,11 +997,9 @@ func (c *HikClient) TCG2A5EVCLGetCond(reqBody SetVCLDataReq) (err error) {
 	}
 
 	xmlWithHeader := []byte(`<?xml version="1.0" encoding="UTF-8"?>` + "\n" + string(xmlData))
+	fmt.Println("请求信息", string(xmlWithHeader))
 	req := ReqInitParam{
-		Url: "/ISAPI/ITC/Entrance/VCL",
-		// Query: map[string]string{
-		// 	"format": "json",
-		// },
+		Url:    "/ISAPI/ITC/Entrance/VCL",
 		Body:   xmlWithHeader,
 		Result: nil,
 		Method: Put,
@@ -1038,6 +1058,46 @@ func (c *HikClient) VCLGetList(reqBody VCLGetListReq) (res *VCLGetListRes, err e
 }
 
 func (c *HikClient) TCG225EVCLDelCond(reqBody TCG225EVCLDelCondReq) (err error) {
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+
+	req := ReqInitParam{
+		Url:    "/ISAPI/Traffic/channels/1/DelLicensePlateAuditData",
+		Body:   jsonData,
+		Result: nil,
+		Method: Put,
+		Headers: map[string]string{
+			"Content-Type": "application/json,charset=utf-8",
+		},
+	}
+
+	err = c.Do(req)
+	return
+}
+
+func (c *HikClient) TCG205EVCLDelCond(reqBody TCG2A5EVCLDelCondReq) (err error) {
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return
+	}
+
+	req := ReqInitParam{
+		Url:    "/ISAPI/Traffic/channels/1/DelLicensePlateAuditData",
+		Body:   jsonData,
+		Result: nil,
+		Method: Put,
+		Headers: map[string]string{
+			"Content-Type": "application/json,charset=utf-8",
+		},
+	}
+
+	err = c.Do(req)
+	return
+}
+
+func (c *HikClient) TCG2A5EVCLDelCond(reqBody TCG2A5EVCLDelCondReq) (err error) {
 	jsonData, err := json.Marshal(reqBody)
 	if err != nil {
 		return

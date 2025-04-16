@@ -475,11 +475,45 @@ func (h *HikGateway) TCG225EVCLDelCond(ip string, data TCG225EVCLDelCondReq) (er
 	return
 }
 
+func (h *HikGateway) TCG205EVCLDelCond(ip string, data TCG2A5EVCLDelCondReq) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).TCG205EVCLDelCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+func (h *HikGateway) TCG2A5EVCLDelCond(ip string, data TCG2A5EVCLDelCondReq) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).TCG2A5EVCLDelCond(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
 // 获取车牌号列表
 func (h *HikGateway) VCLGetList(ip string, data VCLGetListReq) (result *VCLGetListRes, err error) {
 	h.hikMap.Range(func(key, value any) bool {
 		if key.(string) == ip {
 			result, err = value.(*HikClient).VCLGetList(data)
+			return false
+		}
+		return true
+	})
+	return
+}
+
+// 远程开关闸门
+func (h *HikGateway) TCG225RemoteControlGate(ip string, data TCG225BarrierGate) (err error) {
+	h.hikMap.Range(func(key, value any) bool {
+		if key.(string) == ip {
+			err = value.(*HikClient).TCG225RemoteControlGate(data)
 			return false
 		}
 		return true

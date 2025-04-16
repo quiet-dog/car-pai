@@ -1,4 +1,4 @@
-import { DeviceModel, createDeviceApi, deleteDeviceApi, editDeviceApi, getDeviceListApi } from '@/api/manage/device';
+import { DeviceModel, createDeviceApi, deleteDeviceApi, editDeviceApi, getDeviceListApi, opearaRemoteApi } from '@/api/manage/device';
 import { onMounted, reactive, ref } from 'vue';
 import { usePagination } from "@/hooks/usePagination"
 import { Action, ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
@@ -80,11 +80,11 @@ export function useDeviceHook() {
                 }
             }
         ],
-        rtsp: [
-            {
-                required: true, message: "请输入rtsp地址", trigger: "blur"
-            }
-        ],
+        // rtsp: [
+        //     {
+        //         required: true, message: "请输入rtsp地址", trigger: "blur"
+        //     }
+        // ],
         model: [
             {
                 required: true, message: "请选择型号", trigger: "blur"
@@ -128,9 +128,9 @@ export function useDeviceHook() {
     const handleOpen = (t: string) => {
         kind.value = t
         if (t === "Add") {
-            title.value = "新增区域"
+            title.value = "新增设备"
         } else {
-            title.value = "编辑区域"
+            title.value = "编辑设备"
         }
         dialogVisible.value = true
     }
@@ -264,6 +264,20 @@ export function useDeviceHook() {
         }).then(res => { })
     }
 
+    const opearaRemote = (o: {
+        id: number,
+        lockStatus: "open" | "close"
+    }) => {
+        opearaRemoteApi({
+            ids: [o.id],
+            lockStatus: o.lockStatus
+        }).then(res => {
+            ElMessage({ type: "success", message: res.msg })
+        }).catch(err => {
+            ElMessage({ type: "error", message: err.msg })
+        })
+    }
+
     onMounted(() => {
         getTable()
         getSelectOption()
@@ -291,6 +305,7 @@ export function useDeviceHook() {
         handleRow,
         selectAreaOption,
         handleSelectArea,
-        selectAreaValue
+        selectAreaValue,
+        opearaRemote
     }
 }

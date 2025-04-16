@@ -1,0 +1,3 @@
+/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-subbuild/CMakeFiles/uwebsockets-populate.dir
+/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-subbuild/CMakeFiles/edit_cache.dir
+/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-subbuild/CMakeFiles/rebuild_cache.dir

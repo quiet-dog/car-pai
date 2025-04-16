@@ -84,3 +84,8 @@ type SingleVCLDataO struct {
 	StartTime  string `xml:"startTime"`
 	EndTime    string `xml:"endTime"`
 }
+
+type TCG225BarrierGate struct {
+	XMLName  xml.Name `xml:"BarrierGate"`
+	CtrlMode string   `xml:"ctrlMode"`
+}

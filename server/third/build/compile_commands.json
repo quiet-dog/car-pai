@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/zks/Projects/private/car-pai/server/third/build",
+  "command": "/usr/bin/c++  -I/home/zks/Projects/private/car-pai/server/third/src -I/home/zks/Projects/private/car-pai/server/third/hik/include -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/src -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/src/uSockets/src -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/src/examples -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/examples -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/examples/helpers -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/uSockets/src -std=c++17 -DLIBUS_NO_SSL -O3 -o CMakeFiles/HikvisionApp.dir/main.cpp.o -c /home/zks/Projects/private/car-pai/server/third/main.cpp",
+  "file": "/home/zks/Projects/private/car-pai/server/third/main.cpp",
+  "output": "CMakeFiles/HikvisionApp.dir/main.cpp.o"
+},
+{
+  "directory": "/home/zks/Projects/private/car-pai/server/third/build",
+  "command": "/usr/bin/c++  -I/home/zks/Projects/private/car-pai/server/third/src -I/home/zks/Projects/private/car-pai/server/third/hik/include -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/src -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/src/uSockets/src -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/src/examples -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/examples -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/examples/helpers -I/home/zks/Projects/private/car-pai/server/third/build/_deps/uwebsockets-src/uSockets/src -std=c++17 -DLIBUS_NO_SSL -O3 -o CMakeFiles/HikvisionApp.dir/src/server.cpp.o -c /home/zks/Projects/private/car-pai/server/third/src/server.cpp",
+  "file": "/home/zks/Projects/private/car-pai/server/third/src/server.cpp",
+  "output": "CMakeFiles/HikvisionApp.dir/src/server.cpp.o"
+}
+]

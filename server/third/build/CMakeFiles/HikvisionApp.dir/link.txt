@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/HikvisionApp.dir/link.d CMakeFiles/HikvisionApp.dir/main.cpp.o CMakeFiles/HikvisionApp.dir/src/server.cpp.o -o HikvisionApp  _deps/uwebsockets-src/uSockets/uSockets.a /usr/lib/libuv.so /usr/lib/libssl.so /usr/lib/libcrypto.so /usr/lib/libz.so

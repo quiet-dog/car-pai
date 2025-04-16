@@ -19,7 +19,8 @@ const {
     operateAction, mpFormRules,
     tableData, handleRow,
     selectAreaOption, handleSelectArea,
-    selectAreaValue
+    selectAreaValue,
+    opearaRemote
     // formRules, formRef, closeDialog, operateAction,handleClose
 } = useDeviceHook();
 </script>
@@ -57,8 +58,9 @@ const {
                     <el-table-column prop="hikPassword" label="海康密码" min-width="200" />
                     <el-table-column prop="dhUsername" label="大华用户名" min-width="200" />
                     <el-table-column prop="dhPassword" label="大华密码" min-width="200" />
-                    <el-table-column prop="rtsp" label="流地址" min-width="200" />
+                    <!-- <el-table-column prop="rtsp" label="流地址" min-width="200" /> -->
                     <el-table-column prop="model" label="型号" min-width="200" />
+                    <el-table-column prop="area.name" label="所属区域" min-width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200" />
                     <el-table-column prop="createdAt" label="创建时间">
                         <template #default="scope">
@@ -67,6 +69,26 @@ const {
                     </el-table-column>
                     <el-table-column label="操作" width="200">
                         <template #default="scope">
+                            <el-dropdown @command="opearaRemote">
+                                <span class="el-dropdown-link">
+                                    操作
+                                    <el-icon class="el-icon--right">
+                                        <arrow-down />
+                                    </el-icon>
+                                </span>
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item :command="{
+                                            lockStatus: 'open',
+                                            id: scope.row.id
+                                        }">开闸</el-dropdown-item>
+                                        <el-dropdown-item :command="{
+                                            lockStatus: 'close',
+                                            id: scope.row.id
+                                        }">关闸</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
                             <el-button type="text" @click="handleRow(scope.row, 'Edit')">编辑</el-button>
                             <el-button type="danger" @click="handleRow(scope.row, '')" text>删除</el-button>
                         </template>
@@ -92,24 +114,26 @@ const {
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="主机地址" prop="host">
-                    <el-input v-model="formData.host" placeholder="请输入主机名称" />
+                    <el-input v-model="formData.host" placeholder="请输入主机地址" />
                 </el-form-item>
                 <el-form-item label="端口" prop="port">
-                    <el-input v-model="formData.port" placeholder="请输入备注" />
+                    <el-input v-model="formData.port" placeholder="请输入主机端口" />
                 </el-form-item>
                 <el-form-item label="区域选择" prop="areaId">
                     <el-select v-model="formData.areaId" placeholder="选择区域" style="width: 240px">
                         <el-option v-for="item in selectAreaOption" :label="item.name" :value="item.id" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="流地址" prop="rtsp">
+                <!-- <el-form-item label="流地址" prop="rtsp">
                     <el-input v-model="formData.rtsp" placeholder="请输入流地址" />
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item v-if="formData.type == '海康'" label="型号" prop="model">
                     <el-radio-group v-model="formData.model">
                         <el-radio value="DS-TCG225">DS-TCG225</el-radio>
                         <el-radio value="DS-TCG205-E">DS-TCG205-E</el-radio>
                         <el-radio value="DS-TCG2A5-E">DS-TCG2A5-E</el-radio>
+                        <el-radio value="DS-TCG2A5-B">DS-TCG2A5-B</el-radio>
+                        <el-radio value="DS-2CD9125-KS">DS-2CD9125-KS</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="formData.type == '海康'" label="海康用户名" prop="hikUsername">
@@ -124,7 +148,7 @@ const {
                 <el-form-item v-if="formData.type == '大华'" label="大华密码" prop="dhPassword">
                     <el-input v-model="formData.dhPassword" placeholder="请输入备注" />
                 </el-form-item>
-                <el-form-item  prop="remark" label="备注">
+                <el-form-item prop="remark" label="备注">
                     <el-input v-model="formData.remark" placeholder="请输入备注" />
                 </el-form-item>
             </el-form>
@@ -138,4 +162,11 @@ const {
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.example-showcase .el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  display: flex;
+  align-items: center;
+}
+</style>

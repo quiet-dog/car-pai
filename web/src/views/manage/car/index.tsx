@@ -1,4 +1,4 @@
-import { AddCar, CarModel, createCarApi, deleteCarApi, EditCar, editCarApi, getCarListApi } from '@/api/manage/car';
+import { AddCar, CarModel, createCarApi, deleteCarApi, EditCar, editCarApi, getCarListApi, getSelectCarApi, Select } from '@/api/manage/car';
 import { onMounted, reactive, ref } from 'vue';
 import { usePagination } from "@/hooks/usePagination"
 import { Action, ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
@@ -38,24 +38,25 @@ export function useCarHook() {
         color: "0",
         carType: "0",
         listType: "0",
-        cardNo: ""
+        cardNo: "",
+        deviceIds: [],
     })
     const kind = ref("add")
     const mpFormRules: FormRules = reactive({
         carNum: [
             { required: true, message: "请输入车牌号", trigger: "blur" }
         ],
-        areaIds: [
-            {
-                required: true, message: "请选择区域", trigger: "blur", type: "array", validator: (rule: any, value: any, callback: any) => {
-                    if (value.length === 0) {
-                        callback(new Error("请选择区域"))
-                    } else {
-                        callback()
-                    }
-                }
-            }
-        ],
+        // deviceIds: [
+        //     {
+        //         required: true, message: "请选择区域设备", trigger: "blur", type: "array", validator: (rule: any, value: any, callback: any) => {
+        //             if (value.length === 0) {
+        //                 callback(new Error("请选择区域设备"))
+        //             } else {
+        //                 callback()
+        //             }
+        //         }
+        //     }
+        // ],
         startTime: [
             {
                 required: true, message: "请选择时间", trigger: "change", type: "number", validator: (rule: any, value: any, callback: any) => {
@@ -70,6 +71,22 @@ export function useCarHook() {
     })
     const selectAreaOption = ref<AreaModel[]>([])
     const timePicker = ref([])
+    const select = ref<Select[]>([])
+    const deviceIds = ref<number[][]>([])
+
+    const handleChangeSelect = (val: number[][]) => {
+        if (!val) {
+            deviceIds.value = []
+            return
+        }
+        let ids: number[] = []
+        val.forEach((item: number[]) => {
+            if (item.length > 1) {
+                ids.push(item[1])
+            }
+        })
+        deviceIds.value = val
+    }
 
     const handleSearch = () => {
         getTable()
@@ -117,6 +134,7 @@ export function useCarHook() {
     const handleClose = (formRef: FormInstance) => {
         formRef.resetFields();
         timePicker.value = []
+        deviceIds.value = []
     }
 
     const closeDialog = () => {
@@ -138,7 +156,8 @@ export function useCarHook() {
                         carType: formData.carType,
                         listType: formData.listType,
                         color: formData.color,
-                        cardNo: formData.cardNo
+                        cardNo: formData.cardNo,
+                        deviceIds: deviceIds.value.map(item => item[1])
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
@@ -157,7 +176,8 @@ export function useCarHook() {
                         carType: formData.carType,
                         listType: formData.listType,
                         color: formData.color,
-                        cardNo: formData.cardNo
+                        cardNo: formData.cardNo,
+                        deviceIds: deviceIds.value.map(item => item[1])
                     })
                     if (res.code === 0) {
                         ElMessage({ type: "success", message: res.msg })
@@ -174,6 +194,7 @@ export function useCarHook() {
 
     const handleRow = (row: CarModel, t: string) => {
         if (t === "Edit") {
+            deviceIds.value = row.devices?.map(item => [item.areaId, item.id]) || []
             formData.id = row.id
             formData.name = row.name
             formData.remark = row.remark
@@ -221,19 +242,24 @@ export function useCarHook() {
         // searchFormData.a
     }
 
-    const handleChangePicker = (val: any) => {
-        if (val == null) {
-            formData.startTime = 0
-            formData.endTime = 0
-            return
-        }
-        formData.startTime = val[0]
-        formData.endTime = val[1]
-    }
+
+    // const handleChangePicker = (val: any) => {
+    //     console.log("valu", val)
+    //     if (val == null) {
+    //         formData.startTime = 0
+    //         formData.endTime = 0
+    //         return
+    //     }
+    //     formData.startTime = val[0]
+    //     formData.endTime = val[1]
+    // }
 
     onMounted(() => {
         getTable()
         getSelectOption()
+        getSelectCarApi().then(res => {
+            select.value = res.data
+        })
     })
 
     return {
@@ -259,6 +285,9 @@ export function useCarHook() {
         getSelectOption,
         selectAreaOption,
         timePicker,
-        handleChangePicker
+        handleChangePicker,
+        select,
+        handleChangeSelect,
+        deviceIds
     }
 }

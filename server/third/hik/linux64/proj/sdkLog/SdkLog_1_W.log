@@ -1,0 +1,40 @@
+[2025-03-13 20:57:58.967][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-03-13 20:57:58.967][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-03-13 20:57:58.967][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-03-13 20:57:58.967][INF] Login dev 192.168.5.2:8000.
+[2025-03-13 20:57:58.967][INF] dwTotalNum[2048]
+[2025-03-13 20:57:58.971][INF] Private connect 192.168.5.2:8000 sock=142 this=0x84d45184 cmd=0x10000 port=39528
+[2025-03-13 20:57:58.971][INF] LogonDev1 in[192.168.5.2:8000]
+[2025-03-13 20:57:58.971][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[../lib/libcrypto.so.1.1], hHandleRet[-2066419696]
+[2025-03-13 20:57:58.972][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[../lib/libssl.so.1.1], hHandleRet[-2066415248]
+[2025-03-13 20:57:58.972][INF] SSLTRANSAPI::LoadAPI, libeay, Load Real Path[../lib/libcrypto.so.1.1]
+[2025-03-13 20:57:58.972][INF] SSLTRANSAPI::IsAllAPILoaded, SSL_library_init Unload
+[2025-03-13 20:57:58.972][INF] OpenSSL, Not All Function Loaded!
+[2025-03-13 20:57:58.972][INF] SSLTRANSAPI::PrintVersion, OpenSSL version info [OpenSSL 1.1.1l  24 Aug 2021]
+[2025-03-13 20:57:58.972][INF] CSSLTrans::SSLCtxInit, dwSSLVersion[6], m_fnTLSServerMethod
+[2025-03-13 20:57:58.974][ERR] CSSLTrans::SSLTrans_CTX_Load_CA, invalid path[../lib/cert/\]
+[2025-03-13 20:58:00.916][INF] Login dev 10.8.98.80:8000.
+[2025-03-13 20:58:00.917][INF] Private connect 10.8.98.80:8000 sock=142 this=0x84d45184 cmd=0x10000 port=47984
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.0 [0xac110001:172.17.0.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.1 [0xac150001:172.21.0.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.2 [0xac170001:172.23.0.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.3 [0xac120001:172.18.0.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.4 [0xac160001:172.22.0.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.5 [0xac130001:172.19.0.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.6 [0xac140001:172.20.0.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.7 [0xa15153e:10.21.21.62]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.8 [0xa3f763e:10.63.118.62]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.9 [0xa873d3e:10.135.61.62]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.10 [0xa0b0c3e:10.11.12.62]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.11 [0xac19ef6b:172.25.239.107]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.12 [0xac107101:172.16.113.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.13 [0xac104b01:172.16.75.1]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv4 No.14 [0xc0a8018d:192.168.1.141]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv6 No.0 [fe80:0000:0000:0000:bcce:e5ff:fe92:1789]
+[2025-03-13 20:58:03.959][INF] GetLocalIP IPv6 No.1 [fddb:6485:8fed:920e:c699:93b3:644e:c27d]
+[2025-03-13 20:58:03.959][INF] LogonDev1 in[10.8.98.80:8000]
+[2025-03-13 20:58:05.919][ERR] LogonDev1[10.8.98.80]
+[2025-03-13 20:58:05.919][ERR] [10.8.98.80:8000]PRO_LoginHikDevice fail[err=9].[0x00000000,0x00000000]
+[2025-03-13 20:58:05.919][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[1]
+[2025-03-13 20:58:05.929][DBG] CUserMgr::UnRegisterHeartProxy[0]
+[2025-03-13 20:58:05.931][INF] Private connect 192.168.5.2:8000 sock=142 this=0x84d45184 cmd=0x10100 port=39532

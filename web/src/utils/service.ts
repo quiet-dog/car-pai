@@ -7,7 +7,9 @@ import { get, merge } from "lodash-es"
 /** 创建请求实例 */
 function createService() {
   // 创建一个 axios 实例命名为 service
-  const service = axios.create()
+  const service = axios.create({
+    timeout: 500000, // 请求超时时间
+  })
   // 请求拦截
   service.interceptors.request.use(
     (config) => config,
@@ -102,7 +104,7 @@ function createRequest(service: AxiosInstance) {
         "Content-Type": "application/json",
         "x-token": useUserStoreHook().token
       },
-      timeout: 5000,
+      timeout: 500000,
       baseURL: import.meta.env.VITE_BASE_API,
       data: {}
     }

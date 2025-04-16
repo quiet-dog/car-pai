@@ -6,6 +6,7 @@ import (
 	commonReq "server/model/common/request"
 	mangeModel "server/model/manage"
 	mangeReq "server/model/manage/request"
+	"server/pkg/hk_gateway"
 )
 
 type DeviceService struct{}
@@ -76,6 +77,31 @@ func (as *DeviceService) GetDeviceList(req mangeReq.SearchDevice) (list []mangeM
 		db = db.Where("area_id = ?", req.AreaId)
 	}
 
-	err = db.Count(&total).Limit(limit).Offset(offset).Find(&list).Error
+	err = db.Preload("Area").Count(&total).Limit(limit).Offset(offset).Find(&list).Error
 	return
+}
+
+// 远程开关阀门
+func (as *DeviceService) RemoteControlValve(req mangeReq.RemoteControl) (err error) {
+	var deviceModel []*mangeModel.DeviceModel
+	if err = global.TD27_DB.Where("id in (?)", req.IDs).First(&deviceModel).Error; err != nil {
+		return fmt.Errorf("设备不存在")
+	}
+
+	for _, v := range deviceModel {
+		if v.Type == mangeModel.HIK &&
+			(v.Model == mangeModel.HIK_DS_TCG205_E ||
+				v.Model == mangeModel.HIK_DS_TCG225 ||
+				v.Model == mangeModel.HIK_DS_TCG2A5_E) ||
+			v.Model == mangeModel.HIK_DS_TCG2A5_B {
+			data := hk_gateway.TCG225BarrierGate{
+				CtrlMode: req.LockStatus,
+			}
+			if err = global.HikGateway.TCG225RemoteControlGate(v.Host, data); err != nil {
+				return
+			}
+		}
+	}
+	return
+
 }

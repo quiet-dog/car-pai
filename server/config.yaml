@@ -89,3 +89,5 @@ crontab:
     - tableName: monitor_operationLog
       compareField: created_at
       interval: 2160h
+ftp:
+  watch: "/home/zks/Downloads"

@@ -1,5 +1,6 @@
 import { request } from "@/utils/service"
 import { AreaModel } from '../area/index';
+import { DeviceModel } from "../device";
 
 
 export interface AddCar {
@@ -14,6 +15,8 @@ export interface AddCar {
     carType:string
     listType:string
     cardNo?:string
+    deviceIds: number[]
+    devices?:DeviceModel[]
 }
 
 export interface CarModel extends Omit<AddCar, "areaIds"> {
@@ -23,8 +26,14 @@ export interface CarModel extends Omit<AddCar, "areaIds"> {
 
 export interface EditCar extends CId,AddCar { }
 
-export interface SearchCar extends PageInfo, Omit<AddCar,"areaIds"|"carType"|"listType"|"color"> { 
+export interface SearchCar extends PageInfo, Omit<AddCar,"areaIds"|"carType"|"listType"|"color"|"deviceIds"> { 
     areaId:number
+}
+
+export interface Select {
+    value:number
+    label:string
+    children?: Select[]
 }
 
 export type CarListData = ListData<CarModel[]>
@@ -58,5 +67,13 @@ export function deleteCarApi(data: CId) {
         url: "/manage/car/deleteCar",
         method: "post",
         data
+    })
+}
+
+
+export function getSelectCarApi(){
+    return request<ApiResponseData<Select[]>>({
+        url: "/manage/car/getSelectCar",
+        method: "get",
     })
 }
