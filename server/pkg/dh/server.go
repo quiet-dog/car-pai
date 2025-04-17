@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"mime/multipart"
+	"strconv"
+	"strings"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -103,7 +105,6 @@ func (c *Client) Import(body ImportCar) {
 
 func (c *Client) Insert(car Car) (err error) {
 	query := map[string]string{}
-	query["action"] = "insert"
 	if car.Name != "" {
 		query["name"] = car.Name
 	}
@@ -129,15 +130,193 @@ func (c *Client) Insert(car Car) (err error) {
 		query["BeginTime"] = car.BeginTime
 	}
 	if car.EndTime != "" {
-		query["EndTime"] = car.EndTime
+		query["CancelTime"] = car.EndTime
 	}
+	query["action"] = "insert"
+	uri := fmt.Sprintf("action=insert&name=%s&PlateNumber=%s&MasterOfCar=%s&PlateColor=%s&PlateType=%s&VehicleType=%s&VehicleColor=%s&BeginTime=%s&EndTime=%s",
+		car.Name, car.PlateNumber, car.MasterOfCar, car.PlateColor, car.PlateType, car.VehicleType, car.VehicleColor, car.BeginTime, car.EndTime)
 
 	err = c.do(ReqInitParam{
 		Method: Get,
-		Url:    "/cgi-bin/recordUpdater.cgi",
+		Url:    "/cgi-bin/recordUpdater.cgi?" + uri,
 	})
-
 	return
+}
+
+func (c *Client) Update(car Car) (err error) {
+	if car.Recno == 0 {
+		return fmt.Errorf("recno 不能为空")
+	}
+	query := map[string]string{}
+	query["action"] = "update"
+	if car.Name != "" {
+		query["name"] = car.Name
+	}
+	if car.PlateNumber != "" {
+		query["PlateNumber"] = car.PlateNumber
+	}
+	if car.MasterOfCar != "" {
+		query["MasterOfCar"] = car.MasterOfCar
+	}
+	if car.PlateColor != "" {
+		query["PlateColor"] = car.PlateColor
+	}
+	if car.PlateType != "" {
+		query["PlateType"] = car.PlateType
+	}
+	if car.VehicleType != "" {
+		query["VehicleType"] = car.VehicleType
+	}
+	if car.VehicleColor != "" {
+		query["VehicleColor"] = car.VehicleColor
+	}
+	if car.BeginTime != "" {
+		query["BeginTime"] = car.BeginTime
+	}
+	if car.EndTime != "" {
+		query["CancelTime"] = car.EndTime
+	}
+	query["recno"] = fmt.Sprintf("%d", car.Recno)
+	err = c.do(ReqInitParam{
+		Method: Get,
+		Url:    "/cgi-bin/recordUpdater.cgi",
+		Query:  query,
+	})
+	return
+}
+
+func (c *Client) Delete(car DeleteCar) (err error) {
+	if car.Recno == 0 {
+		return fmt.Errorf("recno 不能为空")
+	}
+	query := map[string]string{}
+	query["action"] = "remove"
+	query["recno"] = fmt.Sprintf("%d", car.Recno)
+	query["name"] = car.Name
+	err = c.do(ReqInitParam{
+		Method: Get,
+		Url:    "/cgi-bin/recordUpdater.cgi",
+		Query:  query,
+	})
+	return
+}
+
+func (c *Client) GetCar(req GetCarReq) (result *GetCarRes, err error) {
+	// query := map[string]string{}
+	// query["action"] = "find"
+	// if req.Name != "" {
+	// 	query["name"] = req.Name
+	// }
+	// if req.Count != 0 {
+	// 	query["count"] = fmt.Sprintf("%d", req.Count)
+	// }
+	// if req.StartTime != "" {
+	// 	query["StartTime"] = req.StartTime
+	// }
+	// if req.EndTime != "" {
+	// 	query["EndTime"] = req.EndTime
+	// }
+	uri := fmt.Sprintf("action=find&name=%s&condition.PlateNumber=%s",
+		req.Name, req.PlateNumber)
+	bResult := ""
+	err = c.do(ReqInitParam{
+		Method: Get,
+		Url:    "/cgi-bin/recordFinder.cgi?" + uri,
+		// Query:  query,
+		Result: &bResult,
+	})
+	if err != nil {
+		fmt.Println("请求失败:", err)
+		return
+	}
+	result, err = parseResponse(bResult)
+	return
+}
+
+func parseResponse(body string) (*GetCarRes, error) {
+	lines := strings.Split(body, "\n")
+	resp := &GetCarRes{}
+	recordMap := map[int]*Car{}
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+		key, value := parts[0], parts[1]
+
+		// 处理 found
+		if key == "found" {
+			found, err := strconv.Atoi(value)
+			if err != nil {
+				return nil, err
+			}
+			resp.Found = found
+			continue
+		}
+
+		// 处理 records
+		if strings.HasPrefix(key, "records[") {
+			idxStart := strings.Index(key, "[") + 1
+			idxEnd := strings.Index(key, "]")
+			if idxStart < 0 || idxEnd < 0 || idxEnd <= idxStart {
+				continue
+			}
+			indexStr := key[idxStart:idxEnd]
+			index, err := strconv.Atoi(indexStr)
+			if err != nil {
+				continue
+			}
+			field := key[idxEnd+2:] // skip ].  (eg: ].CreateTime)
+
+			// 创建或获取记录对象
+			rec, ok := recordMap[index]
+			if !ok {
+				rec = &Car{}
+				recordMap[index] = rec
+			}
+
+			// 填充字段
+			switch field {
+			case "BeginTime":
+				rec.BeginTime = value
+			case "CancelTime":
+				rec.EndTime = value
+			// case "ControlledType":
+			// 	rec.ControlledType = value
+			// case "CreateTime":
+			// 	rec.BeginTime, _ = strconv.ParseInt(value, 10, 64)
+			case "MasterOfCar":
+				rec.MasterOfCar = value
+			case "PlateColor":
+				rec.PlateColor = value
+			case "PlateNumber":
+				rec.PlateNumber = value
+			case "PlateType":
+				rec.PlateType = value
+			case "RecNo":
+				rec.Recno, _ = strconv.Atoi(value)
+			case "VehicleColor":
+				rec.VehicleColor = value
+			case "VehicleType":
+				rec.VehicleType = value
+			}
+		}
+	}
+
+	// 按序组装记录
+	for i := 0; i < len(recordMap); i++ {
+		if rec, ok := recordMap[i]; ok {
+			resp.Records = append(resp.Records, *rec)
+		}
+	}
+
+	return resp, nil
 }
 
 func (c *Client) do(req ReqInitParam) (err error) {
@@ -213,8 +392,17 @@ func (c *Client) do(req ReqInitParam) (err error) {
 		}
 	}
 
-	// 输出结果
-	fmt.Println("状态码:", resp.StatusCode())
-	fmt.Println("响应内容:", resp.String())
+	if resp.StatusCode() != 200 {
+		return fmt.Errorf("请求失败，状态码: %d", resp.StatusCode())
+	}
+
+	fmt.Println("状态码:", resp.String())
+	// req.Result是 &string ,将相应的结果赋值给result
+	if req.Result != nil {
+		result, ok := req.Result.(*string)
+		if ok {
+			*result = resp.String()
+		}
+	}
 	return
 }

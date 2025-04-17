@@ -1,4 +1,4 @@
-import { AreaModel, createAreaApi, deleteAreaApi, editAreaApi, getAreaListApi } from '@/api/manage/area';
+import { AreaModel, createAreaApi, deleteAreaApi, editAreaApi, exportFile, getAreaListApi } from '@/api/manage/area';
 import { onMounted, reactive, ref } from 'vue';
 import { usePagination } from "@/hooks/usePagination"
 import { Action, ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
@@ -158,6 +158,38 @@ export function useAreaHook() {
         })
     }
 
+    const exportExcel = (row: AreaModel, target: string) => {
+        exportFile(row.id, target).then(res => {
+            const blobData = res as Blob
+            if (target == "hk") {
+                // excel
+                const url = window.URL.createObjectURL(new Blob([blobData], { type: "application/vnd.ms-excel" }))
+                const a = document.createElement("a")
+                a.style.display = "none"
+                a.href = url
+                a.download = row.name + ".xlsx"
+                document.body.appendChild(a)
+                a.click()
+                window.URL.revokeObjectURL(url)
+            } else {
+                // csv
+                const url = window.URL.createObjectURL(new Blob([blobData], { type: "text/csv" }))
+                const a = document.createElement("a")
+                a.style.display = "none"
+                a.href = url
+                a.download = row.name + ".csv"
+                document.body.appendChild(a)
+                a.click()
+                window.URL.revokeObjectURL(url)
+            }
+
+            // const url = window.URL.createObjectURL(new Blob([blobData], { type: "text/csv" }))
+            // const a = document.createElement("a")
+            // a.style.display = "none"
+
+        })
+    }
+
 
 
     onMounted(() => {
@@ -184,6 +216,7 @@ export function useAreaHook() {
         mpFormRules,
         tableData,
         handleRow,
-        selectUserOption
+        selectUserOption,
+        exportExcel
     }
 }

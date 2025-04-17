@@ -1,6 +1,7 @@
 package manage
 
 import (
+	"encoding/csv"
 	"fmt"
 	"server/global"
 	"server/model/authority"
@@ -8,8 +9,10 @@ import (
 	mangeModel "server/model/manage"
 	mangeReq "server/model/manage/request"
 	"server/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 )
 
 type AreaService struct{}
@@ -77,5 +80,97 @@ func (as *AreaService) GetAreaList(c *gin.Context, req mangeReq.SearchArea) (lis
 	offset := req.PageSize * (req.Page - 1)
 
 	err = db.Count(&total).Limit(limit).Offset(offset).Find(&list).Error
+	return
+}
+
+// 导出区域下的excel
+func (as *AreaService) ExportHKAreaExcel(c *gin.Context, id uint) (err error) {
+	var areaModel mangeModel.AreaModel
+	if err = global.TD27_DB.Where("id = ?", id).First(&areaModel).Error; err != nil {
+		return fmt.Errorf("区域不存在")
+	}
+
+	var carModel []mangeModel.CarModel
+	global.TD27_DB.
+		Table("car_device").
+		Where("device_model_id in (?)", global.TD27_DB.Model(&mangeModel.DeviceModel{}).Where("area_id = ?", id).Select("id")).
+		Find(&carModel)
+	f := excelize.NewFile()
+	defer func() {
+		if err := f.Close(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+	// Create a new sheet.
+	index, err := f.NewSheet("Sheet1")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// 设置标头
+	// 车牌号码 车牌颜色 车牌类型 开始时间 结束时间
+	f.SetCellValue("Sheet1", "A1", "车牌号码")
+	f.SetCellValue("Sheet1", "B1", "车牌颜色")
+	f.SetCellValue("Sheet1", "C1", "车牌类型")
+	f.SetCellValue("Sheet1", "D1", "开始时间")
+	f.SetCellValue("Sheet1", "E1", "结束时间")
+	// 设置单元格格式
+	// 便利数据
+	for i, v := range carModel {
+		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", i+2), v.CarNum)
+		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", i+2), mangeModel.TCG205EPlateColor(v.Color))
+		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", i+2), mangeModel.HK_ExcelFormatType(v.CarType))
+		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", i+2), time.UnixMilli(v.StartTime).Format(time.DateTime))
+		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", i+2), time.UnixMilli(v.EndTime).Format(time.DateTime))
+	}
+	// 设置当前活动的工作表
+	f.SetActiveSheet(index)
+	// 设置文件名
+	fileName := fmt.Sprintf("海康_区域_%s_车牌数据.xlsx", areaModel.Name)
+	// 返回给前端
+	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	c.Header("Content-Disposition", "attachment; filename="+fileName)
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Cache-Control", "must-revalidate")
+	c.Header("Pragma", "public")
+	c.Header("Expires", "0")
+	c.Header("Content-Length", fmt.Sprintf("%d", len(fileName)))
+	if err := f.Write(c.Writer); err != nil {
+		fmt.Println(err)
+		c.String(500, "导出失败")
+	}
+	c.Writer.Flush()
+
+	return
+}
+
+func (as *AreaService) ExportDHAreaCsv(c *gin.Context, id uint) (err error) {
+	var areaModel mangeModel.AreaModel
+	if err = global.TD27_DB.Where("id = ?", id).First(&areaModel).Error; err != nil {
+		return fmt.Errorf("区域不存在")
+	}
+
+	var carModel []mangeModel.CarModel
+	global.TD27_DB.
+		Table("car_device").
+		Where("device_model_id in (?)", global.TD27_DB.Model(&mangeModel.DeviceModel{}).Where("area_id = ?", id).Select("id")).
+		Find(&carModel)
+	// 返回csv文件
+	fileName := fmt.Sprintf("大华_区域_%s_车牌数据.xlsx", areaModel.Name)
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", "attachment; filename="+fileName)
+	c.Header("Cache-Control", "no-cache")
+	writer := csv.NewWriter(c.Writer)
+	writer.Write([]string{"开始时间", "结束时间", "车主姓名", "车牌号"})
+	for _, v := range carModel {
+		writer.Write([]string{
+			time.UnixMilli(v.StartTime).Format("2006/01/02 15:04:05"),
+			time.UnixMilli(v.EndTime).Format("2006/01/02 15:04:05"),
+			v.Name,
+			v.CarNum,
+		})
+	}
+	writer.Flush()
+
 	return
 }

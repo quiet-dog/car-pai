@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 
 	"server/config"
+	"server/pkg/dh"
 	"server/pkg/hk_gateway"
 )
 
@@ -21,4 +22,5 @@ var (
 	TD27_Concurrency_Control = &singleflight.Group{}
 	TD27_CRON                *cron.Cron
 	HikGateway               *hk_gateway.HikGateway
+	DhGateway                *dh.Gateway
 )

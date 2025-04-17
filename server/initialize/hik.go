@@ -11,7 +11,7 @@ func InitHikGateway() {
 	global.HikGateway = hk_gateway.NewHikGateway()
 
 	var hikInfo = []*manage.DeviceModel{}
-	global.TD27_DB.Where("type = ?", "海康").Find(&hikInfo)
+	global.TD27_DB.Where("type = ?", manage.HIK).Find(&hikInfo)
 	for _, v := range hikInfo {
 		port, err := strconv.Atoi(v.Port)
 		if err != nil {

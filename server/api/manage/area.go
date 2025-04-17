@@ -5,6 +5,7 @@ import (
 	commonReq "server/model/common/request"
 	commonRes "server/model/common/response"
 	manageReq "server/model/manage/request"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -88,5 +89,26 @@ func (a *AreaApi) DeleteArea(c *gin.Context) {
 		global.TD27_LOG.Error("删除失败", zap.Error(err))
 	} else {
 		commonRes.OkWithMessage("删除成功", c)
+	}
+}
+
+func (a *AreaApi) ExportAreaExcel(c *gin.Context) {
+	idStr := c.Query("id")
+	target := c.Query("target")
+	if idStr == "" {
+		commonRes.FailWithMessage("id不能为空", c)
+		return
+	}
+	// 转换为uint
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		commonRes.FailWithMessage("id格式错误", c)
+		return
+	}
+	if target == "hik" {
+		areaService.ExportHKAreaExcel(c, uint(id))
+	}
+	if target == "dh" {
+		areaService.ExportDHAreaCsv(c, uint(id))
 	}
 }

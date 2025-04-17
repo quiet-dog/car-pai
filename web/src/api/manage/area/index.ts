@@ -47,3 +47,12 @@ export function deleteAreaApi(data: CId) {
         data
     })
 }
+
+export function exportFile(id : number,target : string) {
+    return request({
+        url: "/manage/area/exportAreaExcel",
+        method: "get",
+        params: { id, target },
+        responseType: "blob"
+    })
+}

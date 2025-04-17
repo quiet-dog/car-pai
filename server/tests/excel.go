@@ -73,7 +73,6 @@ func parseExcelToStruct(filePath, sheet string) ([]Car, error) {
 					user.StartTime = value
 				case "EndTime":
 					user.EndTime = value
-
 				}
 			}
 		}

@@ -285,7 +285,6 @@ export function useCarHook() {
         getSelectOption,
         selectAreaOption,
         timePicker,
-        handleChangePicker,
         select,
         handleChangeSelect,
         deviceIds

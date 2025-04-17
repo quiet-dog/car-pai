@@ -17,7 +17,8 @@ const {
   handleOpen,
   handleClose, closeDialog,
   operateAction, mpFormRules,
-  tableData, handleRow, selectUserOption
+  tableData, handleRow, selectUserOption,
+  exportExcel
   // formRules, formRef, closeDialog, operateAction,handleClose
 } = useAreaHook();
 </script>
@@ -62,6 +63,8 @@ const {
             <template #default="scope">
               <el-button type="text" @click="handleRow(scope.row, 'Edit')">编辑</el-button>
               <el-button type="danger" @click="handleRow(scope.row, '')" text>删除</el-button>
+              <el-button type="text" @click="exportExcel(scope.row, 'dh')">导出大华</el-button>
+              <el-button type="text" @click="exportExcel(scope.row, 'hik')">导出海康</el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -3,6 +3,7 @@ package manage
 import (
 	"fmt"
 	"server/global"
+	"server/pkg/dh"
 	"server/pkg/hk_gateway"
 	"strconv"
 
@@ -15,6 +16,7 @@ const (
 	HIK_DS_TCG2A5_B   = "DS-TCG2A5-B"
 	HIK_DS_TCG205_E   = "DS-TCG205-E"
 	HIK_DS_2CD9125_KS = "DS-2CD9125-KS"
+	DH_ITC436_PW9H_Z  = "ITC436-PW9H-Z"
 	HIK               = "海康"
 	DH                = "大华"
 )
@@ -61,6 +63,15 @@ func (d *DeviceModel) AfterCreate(tx *gorm.DB) (err error) {
 				return err
 			}
 		}
+	}
+
+	if d.Type == DH {
+		global.DhGateway.AddDevice(d.ID, dh.Config{
+			Host:     d.Host,
+			Port:     d.Port,
+			Username: d.DhUsername,
+			Password: d.DhPassword,
+		})
 	}
 
 	return

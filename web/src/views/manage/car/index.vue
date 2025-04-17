@@ -104,6 +104,9 @@ const isDisabled = computed(() => {
                 <el-form-item prop="carNum" label="车牌号">
                     <el-input v-model="searchFormData.carNum" placeholder="车牌号" />
                 </el-form-item>
+                <el-form-item prop="name" label="车主姓名">
+                    <el-input v-model="searchFormData.name" placeholder="车主姓名" />
+                </el-form-item>
                 <el-form-item prop="areaId" label="区域">
                     <el-select placeholder="请选择对应区域" style="width: 240px" clearable v-model="searchFormData.areaId"
                         collapse-tags-tooltip>

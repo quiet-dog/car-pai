@@ -2,6 +2,7 @@ package manage
 
 import (
 	"server/global"
+	"server/pkg/dh"
 	"server/pkg/hk_gateway"
 	"time"
 
@@ -196,6 +197,37 @@ func TCG205EListType(c string) string {
 
 }
 
+func DH_ITC436_PW9H_Z_Type(s string) string {
+	if s == "0" {
+		return "TrafficRedList"
+	}
+	return "TrafficBlackList"
+}
+
+func DH_ITC436_PW9H_Z_Color(s string) string {
+	switch s {
+	case "0":
+		return "Blue"
+	case "1":
+		return "Yellow"
+	case "2":
+		return "White"
+	case "3":
+		return "Black"
+	case "4":
+		return "Green"
+	default:
+		return "Other"
+	}
+}
+
+func HK_ExcelFormatType(s string) string {
+	if s == "0" {
+		return "白名单"
+	}
+	return "黑名单"
+}
+
 func (c *CarModel) set(tx *gorm.DB) (err error) {
 
 	areaCarQuery := tx.Table("car_device").Where("car_model_id = ?", c.ID).Select("device_model_id")
@@ -280,6 +312,63 @@ func (c *CarModel) set(tx *gorm.DB) (err error) {
 			}
 
 		}
+
+		if v.Type == DH {
+			if v.Model == DH_ITC436_PW9H_Z {
+				start := time.UnixMicro(c.StartTime).Format(time.DateTime)
+				end := time.UnixMicro(c.EndTime).Format(time.DateTime)
+				if c.ID == 0 {
+					err = global.DhGateway.Insert(v.ID, dh.Car{
+						PlateNumber: c.CarNum,
+						PlateColor:  DH_ITC436_PW9H_Z_Color(c.Color),
+						PlateType:   DH_ITC436_PW9H_Z_Type(c.CarType),
+						BeginTime:   start,
+						EndTime:     end,
+					})
+					if err != nil {
+						return
+					}
+				}
+
+				if c.ID != 0 {
+					var r *dh.GetCarRes
+					r, err = global.DhGateway.GetCar(v.ID, dh.GetCarReq{
+						PlateNumber: c.CarNum,
+						Name:        DH_ITC436_PW9H_Z_Type(c.ListType),
+					})
+					if err != nil {
+						return
+					}
+					if r != nil && len(r.Records) > 0 {
+						for _, dhCar := range r.Records {
+							err = global.DhGateway.Update(v.ID, dh.Car{
+								PlateNumber: c.CarNum,
+								PlateColor:  DH_ITC436_PW9H_Z_Color(c.Color),
+								PlateType:   DH_ITC436_PW9H_Z_Type(c.CarType),
+								BeginTime:   start,
+								EndTime:     end,
+								Recno:       dhCar.Recno,
+							})
+							if err != nil {
+								return
+							}
+						}
+					} else {
+						err = global.DhGateway.Insert(v.ID, dh.Car{
+							PlateNumber: c.CarNum,
+							PlateColor:  DH_ITC436_PW9H_Z_Color(c.Color),
+							PlateType:   DH_ITC436_PW9H_Z_Type(c.CarType),
+							BeginTime:   start,
+							EndTime:     end,
+						})
+						if err != nil {
+							return
+						}
+					}
+				}
+			}
+		}
+
 	}
 	return
 }
@@ -310,6 +399,28 @@ func (c *CarModel) DeleteByDevice(deviceIds []uint) (err error) {
 			err = global.HikGateway.TCG205EVCLDelCond(v.Host, data)
 		}
 
+		// 大华
+		if v.Model == DH_ITC436_PW9H_Z {
+			var r *dh.GetCarRes
+			r, err = global.DhGateway.GetCar(v.ID, dh.GetCarReq{
+				PlateNumber: c.CarNum,
+				Name:        DH_ITC436_PW9H_Z_Type(c.ListType),
+			})
+			if err != nil {
+				return
+			}
+			if r != nil && len(r.Records) > 0 {
+				for _, dhCar := range r.Records {
+					err = global.DhGateway.Delete(v.ID, dh.DeleteCar{
+						Recno: dhCar.Recno,
+						Name:  DH_ITC436_PW9H_Z_Type(c.ListType),
+					})
+					if err != nil {
+						return
+					}
+				}
+			}
+		}
 	}
 	return
 }

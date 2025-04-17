@@ -10,6 +10,7 @@ import (
 
 func main() {
 
+	// ITC436-PW9H-Z
 	c := dh.New(dh.Config{
 		Username: "admin",
 		Password: "Kygs12345",
@@ -17,7 +18,22 @@ func main() {
 		Port:     "80",
 	})
 
-	c.Import(dh.ImportCar{})
+	l, err := c.GetCar(dh.GetCarReq{
+		PlateNumber: "粤A12345",
+		Name:        "TrafficBlackList",
+	})
+	if err != nil {
+		panic(err)
+	}
+	for _, v := range l.Records {
+		err = c.Delete(dh.DeleteCar{
+			Name:  "TrafficBlackList",
+			Recno: v.Recno,
+		})
+		if err != nil {
+			panic(err)
+		}
+	}
 
 	// url := "http://192.168.1.108/cgi-bin/magicBox.cgi?action=getLanguageCaps"
 	// username := "admin"
