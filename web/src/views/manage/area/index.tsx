@@ -161,7 +161,7 @@ export function useAreaHook() {
     const exportExcel = (row: AreaModel, target: string) => {
         exportFile(row.id, target).then(res => {
             const blobData = res as Blob
-            if (target == "hk") {
+            if (target == "hik") {
                 // excel
                 const url = window.URL.createObjectURL(new Blob([blobData], { type: "application/vnd.ms-excel" }))
                 const a = document.createElement("a")

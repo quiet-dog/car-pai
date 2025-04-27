@@ -1,10 +1,13 @@
 package initialize
 
 import (
+	"os"
 	"server/global"
 	"server/model/manage"
 	"server/pkg/hk_gateway"
 	"time"
+
+	"github.com/jasonlvhit/gocron"
 )
 
 func Hik() {
@@ -75,6 +78,16 @@ func Hik() {
 	}
 }
 
-// func InitTask() {
-// 	gocron.Every(1).Second().Do()
-// }
+func CleanCarLog() {
+	// 查询创建时间超过90天的记录
+	var carLogModel []manage.CarLogModel
+	global.TD27_DB.Where("created_at < ?", time.Now().AddDate(0, 0, -90)).Find(&carLogModel)
+	for _, v := range carLogModel {
+		os.Remove(global.TD27_CONFIG.Ftp.Watch + "/" + v.Uri)
+		global.TD27_DB.Delete(&v)
+	}
+}
+
+func InitTask() {
+	gocron.Every(1).Day().At("00:00").Do(CleanCarLog)
+}

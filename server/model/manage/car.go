@@ -73,7 +73,10 @@ func (c *CarModel) AfterCreate(tx *gorm.DB) (err error) {
 
 func (c *CarModel) AfterSave(tx *gorm.DB) (err error) {
 	var deviceModels []*DeviceModel
+	// haveDeviceIds := []uint{}
 	tx.Where("id in (?)", c.DeviceIds).Find(&deviceModels)
+
+	// tx.Table("car_device").Unscoped().Where("car_model_id = ? and device_model_id not in (?)", c.ID, c.DeviceIds).Select("device_model_id").Find(&haveDeviceIds)
 	// 关联设备
 	tx.Exec("delete from car_device where car_model_id = ?", c.ID)
 	for _, v := range deviceModels {

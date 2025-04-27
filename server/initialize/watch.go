@@ -78,7 +78,7 @@ func WatchFile() {
 							continue
 						}
 
-						if deviceModel.Type == "海康" {
+						if deviceModel.Type == manage.HIK {
 							fmt.Println("海康设备:", ipName)
 							utfFileName, err := gbkToUtf8([]byte(fileName))
 							if err != nil {
@@ -97,6 +97,10 @@ func WatchFile() {
 							if err = global.TD27_DB.Create(&carLog).Error; err != nil {
 								fmt.Println("插入失败:", err)
 							}
+						}
+
+						if deviceModel.Type == manage.DH {
+
 						}
 
 					}

@@ -164,6 +164,8 @@ export function useCarHook() {
                         getTable()
                     }
                 } else if (kind.value === "Edit") {
+                    // deviceIds.value = formData.devices?.map(item => [item.areaId, item.id]) || []
+                    // console.log("deviceIds", deviceIds.value)
                     const res = await editCarApi({
                         id: formData.id,
                         name: formData.name,
@@ -195,6 +197,7 @@ export function useCarHook() {
     const handleRow = (row: CarModel, t: string) => {
         if (t === "Edit") {
             deviceIds.value = row.devices?.map(item => [item.areaId, item.id]) || []
+            console.log("deviceIds", deviceIds.value)
             formData.id = row.id
             formData.name = row.name
             formData.remark = row.remark

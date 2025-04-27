@@ -59,7 +59,7 @@ const {
               {{ formatDateTime(scope.row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="200">
+          <el-table-column label="操作" width="300">
             <template #default="scope">
               <el-button type="text" @click="handleRow(scope.row, 'Edit')">编辑</el-button>
               <el-button type="danger" @click="handleRow(scope.row, '')" text>删除</el-button>

@@ -69,7 +69,7 @@ const {
                     </el-table-column>
                     <el-table-column label="操作" width="200">
                         <template #default="scope">
-                            <el-dropdown @command="opearaRemote">
+                            <!-- <el-dropdown @command="opearaRemote">
                                 <span class="el-dropdown-link">
                                     操作
                                     <el-icon class="el-icon--right">
@@ -88,7 +88,7 @@ const {
                                         }">关闸</el-dropdown-item>
                                     </el-dropdown-menu>
                                 </template>
-                            </el-dropdown>
+                            </el-dropdown> -->
                             <el-button type="text" @click="handleRow(scope.row, 'Edit')">编辑</el-button>
                             <el-button type="danger" @click="handleRow(scope.row, '')" text>删除</el-button>
                         </template>

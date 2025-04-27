@@ -38,6 +38,7 @@ func main() {
 	go initialize.WatchFile()
 	initialize.InitHikGateway() // 初始化海康威视
 	initialize.InitDh()
+	initialize.InitTask()
 
 	core.RunServer()
 }

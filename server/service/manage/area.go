@@ -91,10 +91,14 @@ func (as *AreaService) ExportHKAreaExcel(c *gin.Context, id uint) (err error) {
 	}
 
 	var carModel []mangeModel.CarModel
-	global.TD27_DB.
+	carIdsQuery := global.TD27_DB.
 		Table("car_device").
+		Unscoped().
 		Where("device_model_id in (?)", global.TD27_DB.Model(&mangeModel.DeviceModel{}).Where("area_id = ?", id).Select("id")).
+		Select("car_model_id")
+	global.TD27_DB.Where("id in (?)", carIdsQuery).
 		Find(&carModel)
+
 	f := excelize.NewFile()
 	defer func() {
 		if err := f.Close(); err != nil {
@@ -120,6 +124,8 @@ func (as *AreaService) ExportHKAreaExcel(c *gin.Context, id uint) (err error) {
 		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", i+2), v.CarNum)
 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", i+2), mangeModel.TCG205EPlateColor(v.Color))
 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", i+2), mangeModel.HK_ExcelFormatType(v.CarType))
+		fmt.Println(v.StartTime, v.EndTime)
+		fmt.Println(time.UnixMilli(v.StartTime).Format(time.DateTime), time.UnixMilli(v.EndTime).Format(time.DateTime))
 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", i+2), time.UnixMilli(v.StartTime).Format(time.DateTime))
 		f.SetCellValue("Sheet1", fmt.Sprintf("E%d", i+2), time.UnixMilli(v.EndTime).Format(time.DateTime))
 	}
@@ -130,16 +136,16 @@ func (as *AreaService) ExportHKAreaExcel(c *gin.Context, id uint) (err error) {
 	// 返回给前端
 	c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	c.Header("Content-Disposition", "attachment; filename="+fileName)
+	c.Header("File-Name", fileName)
 	c.Header("Content-Transfer-Encoding", "binary")
-	c.Header("Cache-Control", "must-revalidate")
-	c.Header("Pragma", "public")
 	c.Header("Expires", "0")
-	c.Header("Content-Length", fmt.Sprintf("%d", len(fileName)))
+	// c.Header("Content-Length", fmt.Sprintf("%d", len(f.)))
+	// 获取文件长度
 	if err := f.Write(c.Writer); err != nil {
 		fmt.Println(err)
 		c.String(500, "导出失败")
 	}
-	c.Writer.Flush()
+	// c.Writer.Flush()
 
 	return
 }
@@ -151,9 +157,12 @@ func (as *AreaService) ExportDHAreaCsv(c *gin.Context, id uint) (err error) {
 	}
 
 	var carModel []mangeModel.CarModel
-	global.TD27_DB.
+	carIdsQuery := global.TD27_DB.
 		Table("car_device").
+		Unscoped().
 		Where("device_model_id in (?)", global.TD27_DB.Model(&mangeModel.DeviceModel{}).Where("area_id = ?", id).Select("id")).
+		Select("car_model_id")
+	global.TD27_DB.Where("id in (?)", carIdsQuery).
 		Find(&carModel)
 	// 返回csv文件
 	fileName := fmt.Sprintf("大华_区域_%s_车牌数据.xlsx", areaModel.Name)
