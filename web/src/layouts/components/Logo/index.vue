@@ -22,7 +22,8 @@ const { isLeft, isTop } = useLayoutMode()
         <img :src="logo" class="layout-logo" />
       </router-link>
       <router-link v-else key="expand" to="/">
-        <img :src="!isLeft ? logoText2 : logoText1" class="layout-logo-text" />
+        <!-- <img :src="!isLeft ? logoText2 : logoText1" class="layout-logo-text" /> -->
+         <div class="layout-logo-text">白名单管理</div>
       </router-link>
     </transition>
   </div>
@@ -42,6 +43,8 @@ const { isLeft, isTop } = useLayoutMode()
   .layout-logo-text {
     height: 100%;
     vertical-align: middle;
+    color: white;
+    font-weight: bold;
   }
 }
 
